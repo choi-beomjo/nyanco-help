@@ -4,4 +4,4 @@ from .board.api import router
 
 
 api = APIRouter()
-api.include_router(router)
+api.include_router(router, prefix="/board")
