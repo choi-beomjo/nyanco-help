@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
+from fastapi import Depends
 
 
 engine = create_engine(
@@ -10,7 +10,18 @@ engine = create_engine(
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
-Base = declarative_base()
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+def get_crud(db: Session = Depends(get_db)):
+    return CRUD(db)
+
 
 class CRUD:
     def __init__(self, session: Session):
@@ -42,12 +53,6 @@ class CRUD:
             self.session.commit()
         return obj
 
-# 예제 모델 클래스
-class User(Base):
-    __tablename__ = 'USER'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
 
 # 예제 사용법
 if __name__ == "__main__":
