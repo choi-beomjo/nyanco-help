@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from fastapi import Depends
 
@@ -53,24 +53,3 @@ class CRUD:
             self.session.commit()
         return obj
 
-
-# 예제 사용법
-if __name__ == "__main__":
-    crud = CRUD(session=SessionLocal)
-
-    # 사용자 생성
-    new_user = User(name="John Doe", email="john.doe@example.com")
-    created_user = crud.create(new_user)
-    print(f"Created User: {created_user.id}, {created_user.name}, {created_user.email}")
-
-    # 사용자 읽기
-    read_user = crud.read(User, created_user.id)
-    print(f"Read User: {read_user.id}, {read_user.name}, {read_user.email}")
-
-    # 사용자 업데이트
-    updated_user = crud.update(User, read_user.id, name="Jane Doe", email="jane.doe@example.com")
-    print(f"Updated User: {updated_user.id}, {updated_user.name}, {updated_user.email}")
-
-    # 사용자 삭제
-    #deleted_user = crud.delete(User, updated_user.id)
-    #print(f"Deleted User: {deleted_user.id if deleted_user else 'User not found'}")
