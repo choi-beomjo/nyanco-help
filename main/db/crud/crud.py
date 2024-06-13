@@ -36,6 +36,12 @@ class CRUD:
     def read(self, model, obj_id):
         return self.session.query(model).filter(model.id == obj_id).first()
 
+    def read_all(self, model, **kwargs):
+        query = self.session.query(model)
+        for key, value in kwargs.items():
+            query = query.filter(getattr(model, key) == value)
+        return query.all()
+
     def update(self, model, obj_id, **kwargs):
         obj = self.session.query(model).filter(model.id == obj_id).first()
         if not obj:
