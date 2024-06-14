@@ -9,11 +9,8 @@ router = APIRouter(tags=[Tags.user])
 
 @router.get("/list")
 def get_users(name: str = None, email: str = None, crud: CRUD = Depends(get_crud)):
-    filters = {}
-    if name:
-        filters["name"] = name
-    if email:
-        filters["email"] = email
+    filters = {key: value for key, value in (("name", name), ("email", email)) if value}
+
     db_users = crud.read_all(User, **filters)
     return [{"id": user.id, "name": user.name, "email": user.email} for user in db_users]
 
@@ -32,3 +29,7 @@ def add_user(name: str, email: str, crud: CRUD = Depends(get_crud)):
     return {"id": db_user.id, "name": db_user.name, "email": db_user.email}
 
 
+@router.delete("/{user_id}")
+def delete_user(user_id: int, crud: CRUD = Depends(get_crud)):
+    db_user = crud.delete(User, obj_id=user_id)
+    return {"response": 200}
