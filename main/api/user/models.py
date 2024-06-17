@@ -2,10 +2,13 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
-class USER(BaseModel):
+class User(BaseModel):
     id:     str
     name:   str
     email:  str
+
+    class Config:
+        orm_mode = True
 
 
 class UserInfo(BaseModel):
