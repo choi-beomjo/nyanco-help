@@ -9,3 +9,6 @@ class SearchInfo(BaseModel):
 class Post(BaseModel):
     title:      str
     contents:   str
+
+    class Config:
+        orm_mode = True
