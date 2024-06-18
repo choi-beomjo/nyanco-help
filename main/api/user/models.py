@@ -34,5 +34,11 @@ class SignUpInfo(BaseModel):
     def passwords_match(cls, values):
         if values.get('password1') != values.get('password2'):
             raise ValueError('비밀번호가 일치하지 않습니다.')
-        return v
+        return values
+    
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    username: str
         

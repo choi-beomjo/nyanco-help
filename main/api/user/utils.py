@@ -36,3 +36,9 @@ def check_user_existed(user_info, crud: CRUD):
     if len(existing_user) > 0:
         raise HTTPException(status_code=400, detail="Already existing email")
     
+
+def get_user_by_name(name, crud: CRUD):
+    users = crud.read_all(model=User, name=name)
+    if len(users) < 1:
+        raise HTTPException(status_code=400, detail=f"There is no username ({name}))")
+    return users[0]
