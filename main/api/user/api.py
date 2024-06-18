@@ -21,8 +21,10 @@ def get_user(user_id: int, crud: CRUD = Depends(get_crud)):
     return User.from_orm(db_user)
 
 
-@router.post("/", response_model=User)
-def add_user(user_info: UserInfo, crud: CRUD = Depends(get_crud)):
+@router.post("/signup", response_model=User)
+def add_user(user_info: SignUpInfo, crud: CRUD = Depends(get_crud)):
+    check_user_existed(user_info=user_info, crud=crud)
+    
     db_user = add_user_to_db(user_info=user_info, crud=crud)
     return User.from_orm(db_user)
 
@@ -31,3 +33,5 @@ def add_user(user_info: UserInfo, crud: CRUD = Depends(get_crud)):
 def delete_user(user_id: int, crud: CRUD = Depends(get_crud)):
     delete_user_from_db(user_id=user_id, crud=crud)
     return Msg(msg="success")
+
+
