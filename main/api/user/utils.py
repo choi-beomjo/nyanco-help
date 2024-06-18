@@ -1,7 +1,9 @@
 from fastapi import HTTPException
+from passlib.context import CryptContext
 from db.model.user import User
 from db.crud.crud import CRUD
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_user_from_db(user_id: int, crud: CRUD):
     db_user = crud.read(User, user_id)
@@ -17,7 +19,9 @@ def get_users_from_db(user_info, crud: CRUD):
 
 
 def add_user_to_db(user_info: User, crud: CRUD):
-    return crud.create(User(name=user_info.name, email=user_info.email, password=user_info.password1))
+    return crud.create(User(name=user_info.name, 
+                            email=user_info.email, 
+                            password=pwd_context.hash(user_info.password1)))
 
 
 def delete_user_from_db(user_id: int, crud: CRUD):
@@ -31,3 +35,4 @@ def check_user_existed(user_info, crud: CRUD):
     existing_user = crud.read_all(User, **filters)
     if len(existing_user) > 0:
         raise HTTPException(status_code=400, detail="Already existing email")
+    
