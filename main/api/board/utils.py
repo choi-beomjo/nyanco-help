@@ -10,8 +10,10 @@ def get_post_from_db(post_id: int, crud: CRUD):
     return db_post
 
 
-def get_posts_from_db(post_info, crud: CRUD):
+def get_posts_from_db(crud: CRUD, post_info={}, user=None):
     filters = {key: value for key, value in post_info if value}
+    if user:
+        filters.update(dict(user=user))
     db_posts = crud.read_all(Post, **filters)
     return db_posts
 
