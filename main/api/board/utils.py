@@ -16,8 +16,8 @@ def get_posts_from_db(post_info, crud: CRUD):
     return db_posts
 
 
-def add_post_to_db(post_info: Post, crud: CRUD):
-    return crud.create(Post(**post_info.dict()))
+def add_post_to_db(post_info: Post, user, crud: CRUD):
+    return crud.create(Post(**post_info.dict(), user=user))
 
 
 def delete_post_from_db(post_id: int, crud: CRUD):
