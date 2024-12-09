@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from db.model.board import Post
+from .models import Post
 from db.crud.crud import CRUD
 
 

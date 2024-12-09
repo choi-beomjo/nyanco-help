@@ -11,18 +11,6 @@ engine = create_engine(
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-def get_crud(db: Session = Depends(get_db)):
-    return CRUD(db)
-
-
 class CRUD:
     def __init__(self, session: Session):
         self.session = session
