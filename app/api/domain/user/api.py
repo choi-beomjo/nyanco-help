@@ -1,21 +1,18 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordRequestForm
 from jose import jwt, JWTError
 from starlette import status
 from datetime import datetime, timedelta
 from typing import List
-from ..tags import Tags
-from db.crud.crud import get_crud, CRUD
+from ...tags import Tags
+from ...deps import get_current_user, get_crud, CRUD
 from .utils import *
-from .models import *
+from .schemas import *
 from utils.msg.msg import Msg
+from core.security import *
 
 router = APIRouter(tags=[Tags.user])
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
-SECRET_KEY = "4ab2fce7a6bd79e1c014396315ed322dd6edb1c5d975c6b74a2904135172c03c"
-ALGORITHM = "HS256"
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/login")
 
 @router.post("/search", response_model=List[User])
 def get_users(user_info: UserInfo, crud: CRUD = Depends(get_crud)):

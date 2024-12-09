@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
-from ..tags import Tags
+from ...tags import Tags
 from utils.msg.msg import Msg
-from db.crud.crud import get_crud, CRUD
+#from db.crud.crud import get_crud, CRUD
 from .utils import *
-from .models import *
-from ..user.api import get_current_user
+from .schemas import *
+from ...deps import get_current_user, get_crud, CRUD
 
 router = APIRouter(tags=[Tags.board])
 
