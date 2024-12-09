@@ -1,6 +1,7 @@
-from .base import Base
+from model.base import Base
 from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
+
 
 class Post(Base):
     __tablename__ = 'POST'

@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
 
 from db.crud.crud import SessionLocal, CRUD
-from db.model.user import User
+
 from api.domain.user.schemas import Token
 from core.security import oauth2_scheme, SECRET_KEY, ALGORITHM
 
