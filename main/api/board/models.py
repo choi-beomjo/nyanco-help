@@ -12,3 +12,12 @@ class Post(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class PostInfo(BaseModel):
+    id:         int
+    title:      str
+    contents:   str
+
+    class Config:
+        orm_mode = True
