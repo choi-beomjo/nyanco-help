@@ -12,6 +12,7 @@ class Post(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes=True
 
 
 class PostInfo(BaseModel):
@@ -21,3 +22,4 @@ class PostInfo(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes=True
