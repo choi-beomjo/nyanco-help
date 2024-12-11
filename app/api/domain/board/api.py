@@ -8,6 +8,7 @@ from ...deps import get_current_user, get_crud, CRUD
 
 router = APIRouter(tags=[Tags.board])
 
+
 @router.get("/board")
 def get_test_code(crud: CRUD = Depends(get_crud)):
     return Msg(msg="success")
