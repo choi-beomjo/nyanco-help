@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { login } from "@/services/authService";
+
 export default {
   data() {
     return {
@@ -20,12 +22,14 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
-      if (this.username === "admin" && this.password === "password") {
-        this.$emit("login-success");
-      } else {
-        alert("Invalid credentials!");
-      }
+    async handleLogin() {
+        try {
+            const response = await login(this.username, this.password);
+            alert(response.message); // 성공 메시지
+            this.$emit("login-success");
+        } catch (error) {
+            alert(error.message); // 실패 메시지
+        }
     },
   },
 };
