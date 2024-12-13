@@ -9,6 +9,13 @@
 export default {
   name: 'App',
   components: {
+  },
+  mounted() {
+    // 자동 로그인 확인
+    const token = localStorage.getItem("token");
+    if (!token) {
+      this.$router.push("/login");
+    }
   }
 }
 </script>

@@ -25,7 +25,14 @@ export default {
     async handleLogin() {
         try {
             const response = await login(this.username, this.password);
-            alert(response.message); // 성공 메시지
+
+            const { access_token, token_type, username } = response;
+            localStorage.setItem("token", access_token);
+            localStorage.setItem("token_type", token_type);
+            localStorage.setItem("username", username);
+
+            alert(`Welcome ${username}!`); // 성공 메시지
+            this.$router.push("/");
             this.$emit("login-success");
         } catch (error) {
             alert(error.message); // 실패 메시지
