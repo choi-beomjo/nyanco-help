@@ -1,16 +1,21 @@
 <template>
   <div id="app">
-    <PostList />
+    <router-view />
   </div>
 </template>
 
 <script>
-import PostList from "./components/PostList.vue";
 
 export default {
   name: 'App',
   components: {
-    PostList,
+  },
+  mounted() {
+    // 자동 로그인 확인
+    const token = localStorage.getItem("token");
+    if (!token) {
+      this.$router.push("/login");
+    }
   }
 }
 </script>

@@ -10,6 +10,7 @@ class User(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes=True
 
 
 class UserInfo(BaseModel):
