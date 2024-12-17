@@ -15,3 +15,14 @@ def add_enemy_to_db(enemy_data, crud: CRUD):
         skills=skills,
         properties=properties
     ))
+
+
+def get_enemies_from_db(crud: CRUD, enemy_info={}, skills=None, properties=None):
+    filters = {key: value for key, value in enemy_info if value}
+
+    if skills:
+        filters.update(dict(skills=skills))
+    if properties:
+        filters.update(dict(properties=properties))
+    enemies = crud.read_all(Enemy, **filters)
+    return enemies

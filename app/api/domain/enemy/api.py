@@ -10,7 +10,7 @@ router = APIRouter(tags=[Tags.enemy])
 
 @router.get("/list")
 def get_enemy_list(crud: CRUD = Depends(get_crud)):
-    #enemies = get_enemy_list_from_db(crud=crud)
+    enemies = get_enemies_from_db(crud=crud)
     return 
 
 
