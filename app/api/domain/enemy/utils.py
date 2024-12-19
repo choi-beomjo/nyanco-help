@@ -4,10 +4,16 @@ from db.crud.crud import CRUD
 
 
 def add_enemy_to_db(enemy_data, crud: CRUD):
-    skills = crud.read_all(Skill, name=enemy_data['skills'][0])
-    properties = crud.read_all(Property, name=enemy_data['properties'][0])
+    skills = [crud.read_all(Skill, name=skill)[0] for skill in enemy_data['skills']]
+    properties = [crud.read_all(Property, name=property)[0] for property in enemy_data['properties']]
 
-    crud.create(Enemy(skills=skills, properties=properties, **enemy_data))
+    crud.create(Enemy(
+        atk=enemy_data['atk'],
+        hp=enemy_data['hp'],
+        range=enemy_data['range'],
+        skills=skills,
+        properties=properties
+    ))
 
 
 def get_enemies_from_db(crud: CRUD, enemy_info={}, skills=None, properties=None):

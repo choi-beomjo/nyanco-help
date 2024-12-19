@@ -16,7 +16,7 @@ def get_enemy_list(crud: CRUD = Depends(get_crud)):
 
 
 @router.post("")
-def post_enemy(enemy_info: EnemyInfo, crud: CRUD = Depends(get_crud)):
+def post_enemy(enemy_info: EnemyPost, crud: CRUD = Depends(get_crud)):
     
     enemy_data = enemy_info.dict()
     add_enemy_to_db(enemy_data=enemy_data, crud=crud)

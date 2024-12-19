@@ -32,3 +32,13 @@ class EnemyInfo(BaseModel):
         from_attributes=True
 
 
+class EnemyPost(BaseModel):
+    atk:    int
+    hp:     int
+    range:  int
+    skills: Optional[List[str]] = []
+    properties: Optional[List[str]] = []
+
+    class Config:
+        orm_mode = True
+        from_attributes=True
