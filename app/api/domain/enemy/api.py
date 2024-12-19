@@ -9,11 +9,10 @@ from ...deps import get_current_user, get_crud, CRUD
 router = APIRouter(tags=[Tags.enemy])
 
 
-@router.get("/list", response_model=List[EnemyInfo])
+@router.get("/list")
 def get_enemy_list(crud: CRUD = Depends(get_crud)):
     enemies = get_enemies_from_db(crud=crud)
     return [EnemyInfo.from_orm(enemy) for enemy in enemies]
-
 
 
 @router.post("")
