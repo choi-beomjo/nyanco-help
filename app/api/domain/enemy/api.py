@@ -26,4 +26,17 @@ def post_enemy(enemy_info: EnemyPost, crud: CRUD = Depends(get_crud)):
 
 @router.get("/{enemy_id}")
 def get_enemy(enemy_id: int, crud: CRUD = Depends(get_crud)):
-    return
+    enemy = get_enemy_from_db(enemy_id=enemy_id, crud=crud)
+    return EnemyInfo.from_orm(enemy)
+
+
+@router.put("/{enemy_id}")
+def update_enemy(enemy_info: EnemyPost, enemy_id: int, crud: CRUD = Depends(get_crud)):
+    enemy = update_enemy_from_db(enemy_id=enemy_id, enemy_data=enemy_info.dict(), crud=crud)
+    return EnemyInfo.from_orm(enemy)
+
+
+@router.delete("/{enemy_id}")
+def delete_enemy(enemy_id: int, crud: CRUD = Depends(get_crud)):
+    enemy = delete_enemy_from_db(enemy_id=enemy_id, crud=crud)
+    return Msg(msg="sucess")
