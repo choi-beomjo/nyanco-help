@@ -6,7 +6,7 @@ from jose import JWTError, jwt
 
 from db.crud.crud import SessionLocal, CRUD
 
-from api.domain.user.schemas import Token
+from api.domain.user.schemas import Token, User
 from core.security import oauth2_scheme, SECRET_KEY, ALGORITHM
 
 from api.domain.user.utils import get_user_by_name
@@ -43,3 +43,10 @@ def get_current_user(token: str = Depends(oauth2_scheme),
         return user
 
 
+def admin_required(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required",
+        )
+    return current_user
