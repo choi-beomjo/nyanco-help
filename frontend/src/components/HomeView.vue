@@ -9,6 +9,7 @@
       <p>Hello, {{ username }}!</p>
       <button @click="goToPosts">Go to Posts</button>
       <button @click="logout">Logout</button>
+      <button @click="goToEnemyList">View Enemy List</button>
     </div>
   </div>
 </template>
@@ -48,6 +49,9 @@ export default {
       this.isLoggedIn = false;
       this.username = "";
       this.$router.push("/login");
+    },
+    goToEnemyList() {
+      this.$router.push("/enemy-list"); // 적 리스트 페이지로 이동
     },
   },
 };
