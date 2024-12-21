@@ -21,6 +21,7 @@ class PropertyInfo(BaseModel):
 
 
 class EnemyInfo(BaseModel):
+    id:     int
     atk:    int
     hp:     int
     range:  int

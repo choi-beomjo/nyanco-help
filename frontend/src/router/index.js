@@ -3,6 +3,7 @@ import HomeView from '../components/HomeView.vue';
 import PostList from '../components/PostList.vue';
 import LoginForm from "@/views/LoginForm.vue";
 import EnemyListView from "@/views/EnemyListView.vue"
+import EnemyEdit from '@/views/EnemyEdit.vue';
 
 
 const routes = [
@@ -13,7 +14,8 @@ const routes = [
     name: "Login",
     component: LoginForm,
   },
-  { path: "/enemy-list", name: "EnemyList", component: EnemyListView }
+  { path: "/enemy-list", name: "EnemyList", component: EnemyListView },
+  { path: "/enemy/edit/:id", component: EnemyEdit, props: true }
 ];
 
 const router = createRouter({

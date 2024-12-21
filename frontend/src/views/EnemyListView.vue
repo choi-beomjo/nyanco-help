@@ -8,7 +8,8 @@
             <strong>ATK:</strong> {{ enemy.atk }},
             <strong>HP:</strong> {{ enemy.hp }},
             <strong>Range:</strong> {{ enemy.range }}
-            <strong>Range:</strong> {{ enemy.skills }}
+            <strong>Skills:</strong> {{ enemy.skills }}
+            <button @click="goToEdit(enemy.id)">Edit</button>
           </li>
         </ul>
       </div>
@@ -42,6 +43,9 @@
       },
       goBack() {
         this.$router.push("/"); // 홈으로 이동
+      },
+      goToEdit(enemyId) {
+        this.$router.push(`/enemy/edit/${enemyId}`);
       },
     },
   };
