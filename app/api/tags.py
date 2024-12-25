@@ -4,3 +4,4 @@ class Tags(Enum):
     board="Board"
     user="User"
     enemy="Enemy"
+    skill="Skill"
