@@ -1,15 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from ..skill.schemas import SkillInfo
+from ..property.schemas import PropertyInfo
 
-
-class PropertyInfo(BaseModel):
-    id: int
-    name: str
-    
-    class Config:
-        orm_mode = True
-        from_attributes=True
 
 
 class EnemyInfo(BaseModel):

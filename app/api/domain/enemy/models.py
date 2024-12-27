@@ -28,16 +28,3 @@ class Enemy(Base):
     skills = relationship("Skill", secondary=enemy_skills, back_populates="enemies")
     properties = relationship("Property", secondary=enemy_properties, back_populates="enemies")
 
-'''
-class Skill(Base):
-    __tablename__ = 'skills'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, unique=True, nullable=False)
-    enemies = relationship("Enemy", secondary=enemy_skills, back_populates="skills")
-'''
-
-class Property(Base):
-    __tablename__ = 'properties'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, unique=True, nullable=False)
-    enemies = relationship("Enemy", secondary=enemy_properties, back_populates="properties")

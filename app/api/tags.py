@@ -5,3 +5,4 @@ class Tags(Enum):
     user="User"
     enemy="Enemy"
     skill="Skill"
+    property="Property"
