@@ -3,24 +3,31 @@
       <h1>Skills List</h1>
       <div v-if="skills.length">
         <ul>
-          <li v-for="skill in skills" :key="skill.id">
-            <strong>ID:</strong> {{ skill.id }},
-            <strong>Skill Name:</strong> {{ skill.name }}
-            <button @click="goToEdit(skill.id)">Edit</button>
-          </li>
+          <SkillItem
+            v-for="skill in skills"
+            :key="skill.id"
+            :skill="skill"
+            @edit="goToEdit"
+          />
         </ul>
       </div>
       <div v-else>
         <p>No skills found.</p>
       </div>
-      <button @click="goBack">Back</button>
+      <BackButton />
     </div>
   </template>
   
   <script>
   import axios from "@/services/axios.js"; // Axios로 API 호출
-  
+  import SkillItem from "@/components/skill/SkillItem.vue";
+  import BackButton from "@/components/common/BackButton.vue";
+
   export default {
+    components:{
+      SkillItem,
+      BackButton,
+    },
     data() {
       return {
         skills: [], // 적 데이터 저장

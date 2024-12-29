@@ -37,8 +37,8 @@ def get_enemy_from_db(enemy_id: int, crud: CRUD):
 
 
 def update_enemy_from_db(enemy_id:int, enemy_data: dict, crud: CRUD):
-    skills = [crud.read_all(Skill, name=skill)[0] for skill in enemy_data['skills']]
-    properties = [crud.read_all(Property, name=property)[0] for property in enemy_data['properties']]
+    skills = [crud.read(Skill, skill_id) for skill_id in enemy_data['skills']]
+    properties = [crud.read(Property, property_id) for property_id in enemy_data['properties']]
 
     db_enemy = crud.update(Enemy, enemy_id, atk=enemy_data['atk'],
         hp=enemy_data['hp'],
