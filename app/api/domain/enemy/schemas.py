@@ -1,23 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
+from ..skill.schemas import SkillInfo
+from ..property.schemas import PropertyInfo
 
-
-class SkillInfo(BaseModel):
-    id: int
-    name: str
-
-    class Config:
-        orm_mode = True
-        from_attributes=True
-
-
-class PropertyInfo(BaseModel):
-    id: int
-    name: str
-    
-    class Config:
-        orm_mode = True
-        from_attributes=True
 
 
 class EnemyInfo(BaseModel):
@@ -39,6 +24,18 @@ class EnemyPost(BaseModel):
     range:  int
     skills: Optional[List[str]] = []
     properties: Optional[List[str]] = []
+
+    class Config:
+        orm_mode = True
+        from_attributes=True
+
+
+class EnemyUpdate(BaseModel):
+    atk:    int
+    hp:     int
+    range:  int
+    skills: Optional[List[int]] = []
+    properties: Optional[List[int]] = []
 
     class Config:
         orm_mode = True

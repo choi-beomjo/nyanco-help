@@ -5,6 +5,8 @@ from .utils import *
 from .schemas import *
 from .models import *
 from ...deps import get_current_user, get_crud, CRUD, admin_required
+from ..skill.schemas import SkillInfo
+
 
 router = APIRouter(tags=[Tags.enemy])
 
@@ -31,7 +33,7 @@ def get_enemy(enemy_id: int, crud: CRUD = Depends(get_crud)):
 
 
 @router.put("/{enemy_id}")
-def update_enemy(enemy_info: EnemyPost, enemy_id: int, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
+def update_enemy(enemy_info: EnemyUpdate, enemy_id: int, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     enemy = update_enemy_from_db(enemy_id=enemy_id, enemy_data=enemy_info.dict(), crud=crud)
     return EnemyInfo.from_orm(enemy)
 
