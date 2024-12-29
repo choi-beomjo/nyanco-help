@@ -1,7 +1,8 @@
 from fastapi import HTTPException
-from .models import Enemy, Property
+from .models import Enemy
 from db.crud.crud import CRUD
 from ..skill.models import Skill
+from ..property.models import Property
 
 
 def add_enemy_to_db(enemy_data, crud: CRUD):

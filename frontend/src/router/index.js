@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../components/HomeView.vue';
 import PostList from '../components/PostList.vue';
-import LoginForm from "@/views/LoginForm.vue";
-import EnemyListView from "@/views/EnemyListView.vue"
-import EnemyEdit from '@/views/EnemyEdit.vue';
+import LoginForm from "@/views/auth/LoginForm.vue";
+import EnemyListView from "@/views/enemy/EnemyListView.vue"
+import EnemyEdit from '@/views/enemy/EnemyEdit.vue';
+import SkillListView from "@/views/skill/SkillListView.vue"
 
 
 const routes = [
@@ -15,7 +16,8 @@ const routes = [
     component: LoginForm,
   },
   { path: "/enemy-list", name: "EnemyList", component: EnemyListView },
-  { path: "/enemy/edit/:id", component: EnemyEdit, props: true }
+  { path: "/enemy/edit/:id", component: EnemyEdit, props: true },
+  { path: "/skill-list", name: "SkillList", component: SkillListView }
 ];
 
 const router = createRouter({
