@@ -4,7 +4,8 @@ import PostList from '../components/PostList.vue';
 import LoginForm from "@/views/auth/LoginForm.vue";
 import EnemyListView from "@/views/enemy/EnemyListView.vue"
 import EnemyEdit from '@/views/enemy/EnemyEdit.vue';
-import SkillListView from "@/views/skill/SkillListView.vue"
+import SkillListView from "@/views/skill/SkillListView.vue";
+import PropertyListView from '@/views/property/PropertyListView.vue';
 
 
 const routes = [
@@ -17,7 +18,8 @@ const routes = [
   },
   { path: "/enemy-list", name: "EnemyList", component: EnemyListView },
   { path: "/enemy/edit/:id", component: EnemyEdit, props: true },
-  { path: "/skill-list", name: "SkillList", component: SkillListView }
+  { path: "/skill-list", name: "SkillList", component: SkillListView },
+  { path: "/property-list", name: "PropertyList", component: PropertyListView },
 ];
 
 const router = createRouter({

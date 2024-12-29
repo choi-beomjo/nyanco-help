@@ -1,7 +1,7 @@
 <template>
     <li>
       <strong>ID:</strong> {{ skill.id }},
-      <strong>Skill Name:</strong> {{ skill.skills }}
+      <strong>Skill Name:</strong> {{ skill.name }}
       <button @click="$emit('edit', skill.id)">Edit</button>
     </li>
   </template>

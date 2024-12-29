@@ -46,6 +46,20 @@
         </div>
       </div>
 
+      <div>
+        <h2>Properties</h2>
+        <div v-for="property in properties" :key="property.id">
+          <label :for="'property-' + property.id">
+            <input
+              type="checkbox"
+              :id="'property-' + property.id"
+              :value="property.id"
+              v-model="enemy.properties"
+            />
+            {{ property.name }}
+          </label>
+        </div>
+      </div>
   
     <button type="submit">Save</button>
     </form>
@@ -65,8 +79,10 @@
           hp: 0,
           range: 0,
           skills: [],
+          properties: [],
         },
         skills: [],
+        properties: [],
       };
     },
     async created() {
@@ -76,6 +92,7 @@
         this.enemy = response.data;
 
         this.skills = await fetchList("/api/skill/list");
+        this.properties = await fetchList("/api/property/list")
       } catch (error) {
         console.error("Error fetching enemy:", error);
       }

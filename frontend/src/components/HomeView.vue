@@ -11,6 +11,7 @@
       <button @click="logout">Logout</button>
       <button @click="goToEnemyList">View Enemy List</button>
       <button @click="goToSkillList">View Skill List</button>
+      <button @click="goToPropertyList">View Property List</button>
     </div>
   </div>
 </template>
@@ -56,6 +57,9 @@ export default {
     },
     goToSkillList() {
       this.$router.push("/skill-list"); // 적 리스트 페이지로 이동
+    },
+    goToPropertyList() {
+      this.$router.push("/property-list"); // 적 리스트 페이지로 이동
     },
   },
 };
