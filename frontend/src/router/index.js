@@ -2,9 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../components/HomeView.vue';
 import PostList from '../components/PostList.vue';
 import LoginForm from "@/views/auth/LoginForm.vue";
-import SkillListView from "@/views/skill/SkillListView.vue";
 import enemyRoutes from './enemyRoutes';
 import propertyRoutes from './propertyRoutes';
+import skillRoutes from './skillRoutes';
 
 const routes = [
   { path: '/', name: 'HomeView', component: HomeView },
@@ -14,9 +14,9 @@ const routes = [
     name: "Login",
     component: LoginForm,
   },
-  { path: "/skill-list", name: "SkillList", component: SkillListView },
   ...enemyRoutes,
   ...propertyRoutes,
+  ...skillRoutes,
 ];
 
 const router = createRouter({

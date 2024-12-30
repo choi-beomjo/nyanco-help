@@ -15,6 +15,7 @@
         <p>No skills found.</p>
       </div>
       <BackButton />
+      <button @click="goAdd">Add Skill</button>
     </div>
   </template>
   
@@ -51,6 +52,9 @@
       goToEdit(skillId) {
         this.$router.push(`/skill/edit/${skillId}`);
       },
+      goAdd(){
+        this.$router.push("/skill/add");
+      }
     },
   };
   </script>
