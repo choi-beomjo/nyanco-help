@@ -3,8 +3,8 @@ import HomeView from '../components/HomeView.vue';
 import PostList from '../components/PostList.vue';
 import LoginForm from "@/views/auth/LoginForm.vue";
 import SkillListView from "@/views/skill/SkillListView.vue";
-import PropertyListView from '@/views/property/PropertyListView.vue';
 import enemyRoutes from './enemyRoutes';
+import propertyRoutes from './propertyRoutes';
 
 const routes = [
   { path: '/', name: 'HomeView', component: HomeView },
@@ -15,8 +15,8 @@ const routes = [
     component: LoginForm,
   },
   { path: "/skill-list", name: "SkillList", component: SkillListView },
-  { path: "/property-list", name: "PropertyList", component: PropertyListView },
   ...enemyRoutes,
+  ...propertyRoutes,
 ];
 
 const router = createRouter({
