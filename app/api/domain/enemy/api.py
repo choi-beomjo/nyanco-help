@@ -18,7 +18,7 @@ def get_enemy_list(crud: CRUD = Depends(get_crud)):
 
 
 @router.post("")
-def post_enemy(enemy_info: EnemyUpdate, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
+def post_enemy(enemy_info: EnemyData, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     
     enemy_data = enemy_info.dict()
     add_enemy_to_db(enemy_data=enemy_data, crud=crud)
@@ -33,7 +33,7 @@ def get_enemy(enemy_id: int, crud: CRUD = Depends(get_crud)):
 
 
 @router.put("/{enemy_id}")
-def update_enemy(enemy_info: EnemyUpdate, enemy_id: int, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
+def update_enemy(enemy_info: EnemyData, enemy_id: int, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     enemy = update_enemy_from_db(enemy_id=enemy_id, enemy_data=enemy_info.dict(), crud=crud)
     return EnemyInfo.from_orm(enemy)
 
