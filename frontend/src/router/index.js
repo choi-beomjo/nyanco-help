@@ -5,6 +5,7 @@ import LoginForm from "@/views/auth/LoginForm.vue";
 import enemyRoutes from './enemyRoutes';
 import propertyRoutes from './propertyRoutes';
 import skillRoutes from './skillRoutes';
+import characterRoutes from './characterRoutes';
 
 const routes = [
   { path: '/', name: 'HomeView', component: HomeView },
@@ -17,6 +18,7 @@ const routes = [
   ...enemyRoutes,
   ...propertyRoutes,
   ...skillRoutes,
+  ...characterRoutes,
 ];
 
 const router = createRouter({
