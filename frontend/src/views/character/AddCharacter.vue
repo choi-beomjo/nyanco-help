@@ -25,6 +25,12 @@
       <input type="number" id="range" v-model="character.range" />
     </div>
 
+    <!-- Grade Input -->
+    <div>
+        <label for="range">Grade:</label>
+        <input type="str" id="grade" v-model="character.grade" />
+    </div>
+
     <!-- Skills Selection -->
     <div>
       <h2>Skills</h2>
@@ -59,13 +65,18 @@
 
     <button type="submit">Create Character</button>
   </form>
+  <BackButton target="/character-list" />
 </template>
 
 <script>
 import axios from "@/services/axios";
 import { fetchList } from "@/services/apiService.js";
+import BackButton from "@/components/common/BackButton.vue";
 
 export default {
+  components:{
+    BackButton,
+  },
   data() {
     return {
       character: {

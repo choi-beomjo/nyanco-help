@@ -8,7 +8,7 @@
       </div>
   
       <button type="submit">Create Skill</button>
-      <BackButton />
+      <BackButton target="/skill-list" />
     </form>
   </template>
   

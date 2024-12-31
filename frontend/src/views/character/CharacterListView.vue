@@ -24,6 +24,7 @@
   import CharacterItem from "@/components/character/CharacterItem.vue";
   import { fetchList } from "@/services/apiService.js";
   import BackButton from "@/components/common/BackButton.vue";
+  import { useRouterActions } from "@/composables/useRouterActions";
 
   export default {
     components:{
@@ -38,6 +39,15 @@
     created() {
       this.fetchCharacters(); // 페이지 생성 시 API 호출
     },
+    setup() {
+    const { goBack, goToEdit, goAdd } = useRouterActions("character"); // "skill" 대신 "enemy" 등 다른 값 사용 가능.
+
+    return {
+      goBack,
+      goToEdit,
+      goAdd,
+    };
+  },
     methods: {
       async fetchCharacters() {
         try {
@@ -46,15 +56,7 @@
           console.error("Error fetching enemies:", error);
         }
       },
-      goBack() {
-        this.$router.push("/"); // 홈으로 이동
-      },
-      goToEdit(characterId) {
-        this.$router.push(`/character/edit/${characterId}`);
-      },
-      goAdd(){
-        this.$router.push("/character/add");
-      }
+
     },
   };
   </script>

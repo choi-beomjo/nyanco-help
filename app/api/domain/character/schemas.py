@@ -11,6 +11,7 @@ class CharacterInfo(BaseModel):
     atk:    int
     hp:     int
     range:  int
+    grade:  str
     skills: Optional[List[SkillInfo]] = []
     properties: Optional[List[PropertyInfo]] = []
 
@@ -25,6 +26,7 @@ class CharacterData(BaseModel):
     atk:    int
     hp:     int
     range:  int
+    grade:  str
     skills: Optional[List[int]] = []
     properties: Optional[List[int]] = []
 

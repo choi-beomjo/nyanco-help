@@ -20,10 +20,10 @@
 </template>
   
   <script>
-  // import axios from "@/services/axios.js"; // Axios로 API 호출
   import EnemyItem from "@/components/enemy/EnemyItem.vue";
   import { fetchList } from "@/services/apiService.js";
   import BackButton from "@/components/common/BackButton.vue";
+  import { useRouterActions } from "@/composables/useRouterActions";
 
   export default {
     components:{
@@ -38,6 +38,15 @@
     created() {
       this.fetchEnemies(); // 페이지 생성 시 API 호출
     },
+    setup() {
+    const { goBack, goToEdit, goAdd } = useRouterActions("enemy");
+
+    return {
+      goBack,
+      goToEdit,
+      goAdd,
+    };
+  },
     methods: {
       async fetchEnemies() {
         try {
@@ -46,15 +55,6 @@
           console.error("Error fetching enemies:", error);
         }
       },
-      goBack() {
-        this.$router.push("/"); // 홈으로 이동
-      },
-      goToEdit(enemyId) {
-        this.$router.push(`/enemy/edit/${enemyId}`);
-      },
-      goAdd(){
-        this.$router.push("/enemy/add");
-      }
     },
   };
   </script>
