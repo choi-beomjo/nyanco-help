@@ -6,3 +6,4 @@ class Tags(Enum):
     enemy="Enemy"
     skill="Skill"
     property="Property"
+    character="Character"

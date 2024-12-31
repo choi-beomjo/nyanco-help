@@ -5,8 +5,9 @@ from ..property.schemas import PropertyInfo
 
 
 
-class EnemyInfo(BaseModel):
+class CharacterInfo(BaseModel):
     id:     int
+    name:   str
     atk:    int
     hp:     int
     range:  int
@@ -18,7 +19,9 @@ class EnemyInfo(BaseModel):
         from_attributes=True
 
 
-class EnemyData(BaseModel):
+
+class CharacterData(BaseModel):
+    name:   str
     atk:    int
     hp:     int
     range:  int

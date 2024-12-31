@@ -9,10 +9,13 @@
       <p>Hello, {{ username }}!</p>
       <button @click="goToPosts">Go to Posts</button>
       <button @click="logout">Logout</button>
-      <button @click="goToEnemyList">View Enemy List</button>
-      <button @click="goToSkillList">View Skill List</button>
-      <button @click="goToPropertyList">View Property List</button>
-    </div>
+      <div>
+        <button @click="goToEnemyList">View Enemy List</button>
+        <button @click="goToSkillList">View Skill List</button>
+        <button @click="goToPropertyList">View Property List</button>
+        <button @click="goToCharacterList">View Character List</button>
+      </div>
+      </div>
   </div>
 </template>
 
@@ -60,6 +63,9 @@ export default {
     },
     goToPropertyList() {
       this.$router.push("/property-list"); // 적 리스트 페이지로 이동
+    },
+    goToCharacterList() {
+      this.$router.push("/character-list"); // 적 리스트 페이지로 이동
     },
   },
 };
