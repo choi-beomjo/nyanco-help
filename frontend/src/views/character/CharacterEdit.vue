@@ -70,15 +70,20 @@
   
     <button type="submit">Save</button>
     </form>
+    <BackButton target="/character-list" />
 </template>
   
   <script>
   import axios from "@/services/axios";
   //import CharacterInputField from "@/components/character/CharacterInputField.vue";
   import { fetchList } from "@/services/apiService.js";
+import BackButton from "@/components/common/BackButton.vue";
   //import CharacterForm from "@/components/character/CharacterForm.vue";
   
   export default {
+    components:{
+      BackButton
+    },
     data() {
       return {
         character: {

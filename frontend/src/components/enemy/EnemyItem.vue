@@ -1,6 +1,7 @@
 <template>
     <li>
       <strong>ID:</strong> {{ enemy.id }},
+      <strong>Name:</strong> {{ enemy.name }},
       <strong>ATK:</strong> {{ enemy.atk }},
       <strong>HP:</strong> {{ enemy.hp }},
       <strong>Range:</strong> {{ enemy.range }},

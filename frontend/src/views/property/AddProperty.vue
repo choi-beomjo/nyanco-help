@@ -8,7 +8,7 @@
       </div>
   
       <button type="submit">Create Property</button>
-      <BackButton />
+      <BackButton target="/property-list" />
     </form>
   </template>
   

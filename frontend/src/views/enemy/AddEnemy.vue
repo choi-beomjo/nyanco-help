@@ -1,6 +1,12 @@
 <template>
   <h1>Add Enemy</h1>
   <form @submit.prevent="onSubmit">
+    <!-- Name Input -->
+    <div>
+      <label for="name">Name:</label>
+      <input type="string" id="name" v-model="enemy.name" />
+    </div>
+
     <!-- Attack Input -->
     <div>
       <label for="atk">Attack:</label>
@@ -53,13 +59,18 @@
 
     <button type="submit">Create Enemy</button>
   </form>
+  <BackButton target="/enemy-list" />
 </template>
 
 <script>
 import axios from "@/services/axios";
 import { fetchList } from "@/services/apiService.js";
+import BackButton from "@/components/common/BackButton.vue";
 
 export default {
+  components:{
+    BackButton,
+  },
   data() {
     return {
       enemy: {
