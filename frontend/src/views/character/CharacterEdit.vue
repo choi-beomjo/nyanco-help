@@ -38,6 +38,16 @@
         />
       </div>
 
+      <!-- Grade Input -->
+      <div>
+        <label for="range">Grade:</label>
+        <input
+          type="str"
+          id="grade"
+          v-model="character.grade"
+        />
+      </div>
+
       <div>
         <h2>Skills</h2>
         <div v-for="skill in skills" :key="skill.id">

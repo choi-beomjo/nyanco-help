@@ -5,6 +5,7 @@
       <strong>ATK:</strong> {{ character.atk }},
       <strong>HP:</strong> {{ character.hp }},
       <strong>Range:</strong> {{ character.range }},
+      <strong>Grade:</strong> {{ character.grade }},
       <strong>Skills:</strong> {{ character.skills }},
       <strong>Properties</strong> {{ character.properties }}
       <button @click="$emit('edit', character.id)">Edit</button>

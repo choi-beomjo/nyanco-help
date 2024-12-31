@@ -31,6 +31,9 @@ def get_character_from_db(character_id: int, crud: CRUD):
 
 
 def update_character_from_db(character_id:int, character_data: dict, crud: CRUD):
+    
+    character_data['skills'] = [crud.read(Skill, skill_id) for skill_id in character_data['skills']]
+    character_data['properties'] = [crud.read(Property, property_id) for property_id in character_data['properties']]
 
     db_character = crud.update(Character, character_id, **character_data)
     if db_character is None:
