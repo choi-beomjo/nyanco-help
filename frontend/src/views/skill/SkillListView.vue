@@ -23,6 +23,7 @@
   import axios from "@/services/axios.js"; // Axios로 API 호출
   import SkillItem from "@/components/skill/SkillItem.vue";
   import BackButton from "@/components/common/BackButton.vue";
+  import { useRouterActions } from "@/composables/useRouterActions";
 
   export default {
     components:{
@@ -37,6 +38,15 @@
     created() {
       this.fetchSkills(); // 페이지 생성 시 API 호출
     },
+    setup() {
+      const { goBack, goToEdit, goAdd } = useRouterActions("skill");
+
+      return {
+        goBack,
+        goToEdit,
+        goAdd,
+      };
+    },
     methods: {
       async fetchSkills() {
         try {
@@ -46,15 +56,6 @@
           console.error("Error fetching enemies:", error);
         }
       },
-      goBack() {
-        this.$router.push("/"); // 홈으로 이동
-      },
-      goToEdit(skillId) {
-        this.$router.push(`/skill/edit/${skillId}`);
-      },
-      goAdd(){
-        this.$router.push("/skill/add");
-      }
     },
   };
   </script>

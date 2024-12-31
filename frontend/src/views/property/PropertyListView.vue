@@ -23,6 +23,7 @@
   import axios from "@/services/axios.js"; // Axios로 API 호출
   import PropertyItem from "@/components/property/PropertyItem.vue";
   import BackButton from "@/components/common/BackButton.vue";
+  import { useRouterActions } from "@/composables/useRouterActions";
 
   export default {
     components:{
@@ -37,6 +38,15 @@
     created() {
       this.fetchProperties(); // 페이지 생성 시 API 호출
     },
+    setup() {
+      const { goBack, goToEdit, goAdd } = useRouterActions("property");
+
+      return {
+        goBack,
+        goToEdit,
+        goAdd,
+      };
+    },
     methods: {
       async fetchProperties() {
         try {
@@ -45,15 +55,6 @@
         } catch (error) {
           console.error("Error fetching properties:", error);
         }
-      },
-      goBack() {
-        this.$router.push("/"); // 홈으로 이동
-      },
-      goToEdit(propertyId) {
-        this.$router.push(`/property/edit/${propertyId}`);
-      },
-      goAdd(){
-        this.$router.push("/property/add");
       },
     },
   };
