@@ -15,6 +15,7 @@
         <p>No properties found.</p>
       </div>
       <BackButton />
+      <button @click="goAdd">Add Property</button>
     </div>
   </template>
   
@@ -30,7 +31,7 @@
     },
     data() {
       return {
-        properties: [], // 적 데이터 저장
+        properties: [],
       };
     },
     created() {
@@ -50,6 +51,9 @@
       },
       goToEdit(propertyId) {
         this.$router.push(`/property/edit/${propertyId}`);
+      },
+      goAdd(){
+        this.$router.push("/property/add");
       },
     },
   };

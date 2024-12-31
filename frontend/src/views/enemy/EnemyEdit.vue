@@ -92,7 +92,10 @@
         this.enemy = response.data;
 
         this.skills = await fetchList("/api/skill/list");
-        this.properties = await fetchList("/api/property/list")
+        this.properties = await fetchList("/api/property/list");
+
+        this.enemy.skills = this.enemy.skills.map(skill => skill.id);
+      this.enemy.properties = this.enemy.properties.map(property => property.id);
       } catch (error) {
         console.error("Error fetching enemy:", error);
       }

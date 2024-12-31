@@ -15,6 +15,7 @@
       <p>No enemies found.</p>
     </div>
     <BackButton />
+    <button @click="goAdd">Add Enemy</button>
   </div>
 </template>
   
@@ -51,6 +52,9 @@
       goToEdit(enemyId) {
         this.$router.push(`/enemy/edit/${enemyId}`);
       },
+      goAdd(){
+        this.$router.push("/enemy/add");
+      }
     },
   };
   </script>

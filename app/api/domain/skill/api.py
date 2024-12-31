@@ -19,6 +19,6 @@ def get_skill_list(crud: CRUD = Depends(get_crud)):
 def post_enemy(skill_info: SkillPost, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     
     skill_data = skill_info.dict()
-    add_skill_to_db(enemy_data=skill_data, crud=crud)
+    add_skill_to_db(skill_data=skill_data, crud=crud)
 
     return Msg(msg="success")

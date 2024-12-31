@@ -19,6 +19,6 @@ def get_property_list(crud: CRUD = Depends(get_crud)):
 def post_enemy(property_info: PropertyPost, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     
     property_data = property_info.dict()
-    add_property_to_db(enemy_data=property_data, crud=crud)
+    add_property_to_db(property_data=property_data, crud=crud)
 
     return Msg(msg="success")
