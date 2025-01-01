@@ -16,6 +16,7 @@
     </div>
     <BackButton />
     <button @click="goAdd">Add Character</button>
+    <button @click="goSearch">Search Character</button>
   </div>
 </template>
   
@@ -56,7 +57,9 @@
           console.error("Error fetching enemies:", error);
         }
       },
-
+      goSearch(){
+        this.$router.push("/character/search");
+      }
     },
   };
   </script>
