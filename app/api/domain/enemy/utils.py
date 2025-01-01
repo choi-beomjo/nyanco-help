@@ -16,9 +16,9 @@ def get_enemies_from_db(crud: CRUD, enemy_info={}, skills=None, properties=None)
     filters = {key: value for key, value in enemy_info if value}
 
     if skills:
-        filters.update(dict(skills=skills))
+        filters.update(dict(skills=[crud.read(Skill, skill_id) for skill_id in skills]))
     if properties:
-        filters.update(dict(properties=properties))
+        filters.update(dict(properties=[crud.read(Property, property_id) for property_id in properties]))
     enemies = crud.read_all(Enemy, **filters)
     return enemies
 

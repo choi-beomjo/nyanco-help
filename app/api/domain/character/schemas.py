@@ -33,3 +33,8 @@ class CharacterData(BaseModel):
     class Config:
         orm_mode = True
         from_attributes=True
+
+
+class SearchInfo(BaseModel):
+    skills: List[int] = []
+    properties: List[int] = []

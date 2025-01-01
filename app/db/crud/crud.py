@@ -27,7 +27,23 @@ class CRUD:
     def read_all(self, model, **kwargs):
         query = self.session.query(model)
         for key, value in kwargs.items():
-            query = query.filter(getattr(model, key) == value)
+            column = getattr(model, key)
+
+            # 관계 필드 처리
+            if hasattr(column, "property") and hasattr(column.property, "mapper"):
+                if isinstance(value, (list, set, tuple)):
+                    # 관계된 모델의 id 컬렉션 생성
+                    related_ids = [v.id for v in value]
+                    query = query.filter(column.any(column.property.mapper.class_.id.in_(related_ids)))
+                else:
+                    # 단일 값인 경우
+                    query = query.filter(column.any(column.property.mapper.class_.id == value.id))
+            else:
+                # 기본 컬렉션 또는 단일 값 처리
+                if isinstance(value, (list, set, tuple)):
+                    query = query.filter(column.in_(value))
+                else:
+                    query = query.filter(column == value)
         return query.all()
 
     def update(self, model, obj_id, **kwargs):

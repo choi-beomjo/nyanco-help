@@ -42,3 +42,12 @@ def update_enemy(enemy_info: EnemyData, enemy_id: int, crud: CRUD = Depends(get_
 def delete_enemy(enemy_id: int, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     enemy = delete_enemy_from_db(enemy_id=enemy_id, crud=crud)
     return Msg(msg="sucess")
+
+
+@router.post("/search")
+def search_enemies(search_info: SearchInfo, crud: CRUD = Depends(get_crud)):
+    search_ = search_info.dict()
+    enemies = get_enemies_from_db(crud=crud, skills=search_['skills'], properties=search_['properties'])
+    if enemies is None:
+        raise HTTPException(status_code=404, detail="NO Enemies")
+    return [EnemyInfo.from_orm(enemy) for enemy in enemies]

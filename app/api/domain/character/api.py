@@ -42,3 +42,12 @@ def update_character(character_info: CharacterData, character_id: int, crud: CRU
 def delete_character(character_id: int, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     character = delete_character_from_db(character_id=character_id, crud=crud)
     return Msg(msg="sucess")
+
+
+@router.post("/search")
+def search_characters(search_info: SearchInfo, crud: CRUD = Depends(get_crud)):
+    search_ = search_info.dict()
+    characters = get_characters_from_db(crud=crud, skills=search_['skills'], properties=search_['properties'])
+    if characters is None:
+        raise HTTPException(status_code=404, detail="NO Enemies")
+    return [CharacterInfo.from_orm(character) for character in characters]
