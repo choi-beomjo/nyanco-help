@@ -42,7 +42,7 @@ class CRUD:
         # 결과 반환
         return query.first() if single else query.all()
 
-    def read_all(self, model, **kwargs):
+    def read_all(self, model, relationships=None, custom_conditions=None, **kwargs):
         query = self.session.query(model)
         for key, value in kwargs.items():
             column = getattr(model, key)
@@ -62,6 +62,10 @@ class CRUD:
                     query = query.filter(column.in_(value))
                 else:
                     query = query.filter(column == value)
+
+        if custom_conditions:
+            for condition in custom_conditions:
+                query = query.filter(condition)
         return query.all()
 
     def update(self, model, obj_id, **kwargs):

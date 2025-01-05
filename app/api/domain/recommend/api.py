@@ -5,6 +5,7 @@ from ...deps import get_current_user, get_crud, CRUD, admin_required
 from ..enemy.utils import get_enemy_from_db, get_enemies_from_db
 from .utils import *
 from ..character.schemas import CharacterInfo
+from ..character.models import Character
 
 
 router = APIRouter(tags=[Tags.recommend])
@@ -15,6 +16,12 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD=Depends(get_crud)
     enemy = get_enemy_from_db(enemy_id=enemy_id, crud=crud)
     
     characters = get_recommend_characters_by_property(enemy_info=enemy, crud=crud)
-
-    return [CharacterInfo.from_orm(character) for character in characters]
+    characters_by_range = crud.read_all(
+        model=Character,
+        custom_conditions=[Character.range > enemy.range]  # 사용자 정의 조건
+    )
+    return { 
+        "characters_by_properties": [CharacterInfo.from_orm(character) for character in characters],
+        "characters_by_range": [CharacterInfo.from_orm(character) for character in characters_by_range]
+    }
     
