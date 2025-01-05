@@ -8,7 +8,7 @@
       <strong>Grade:</strong> {{ character.grade }},
       <strong>Skills:</strong> {{ character.skills }},
       <strong>Properties</strong> {{ character.properties }}
-      <button @click="$emit('edit', character.id)">Edit</button>
+      <button v-if="showEditButton" @click="$emit('edit', character.id)">Edit</button>
     </li>
   </template>
   
@@ -19,6 +19,10 @@
         type: Object,
         required: true,
       },
+      showEditButton: {
+        type: Boolean,
+        default: true, // 기본값은 추천 버튼을 보이게 설정
+    },
     },
   };
   </script>

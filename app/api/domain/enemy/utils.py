@@ -24,9 +24,14 @@ def get_enemies_from_db(crud: CRUD, enemy_info={}, skills=None, properties=None)
 
 
 def get_enemy_from_db(enemy_id: int, crud: CRUD):
-    db_enemy = crud.read(Enemy, enemy_id)
+    db_enemy = crud.read(
+        model=Enemy, 
+        filters={"id": enemy_id},  # 필터 조건 전달
+        relationships=["skills", "properties"],  # 필요한 관계 로드
+        single=True
+    )
     if db_enemy is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Enemy not found")  # "User not found" -> "Enemy not found"로 수정
     return db_enemy
 
 

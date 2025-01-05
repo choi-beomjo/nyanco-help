@@ -16,16 +16,18 @@ def get_characters_from_db(crud: CRUD, character_info={}, skills=None, propertie
     filters = {key: value for key, value in character_info if value}
 
     if skills:
-
         filters.update(dict(skills=[crud.read(Skill, skill_id) for skill_id in skills]))
     if properties:
-        filters.update(dict(properties=[crud.read(Property, property_id) for property_id in properties]))
+        filters.update(dict(properties=[crud.read(Property, filters={"id": property_id}) for property_id in properties]))
     characters = crud.read_all(Character, **filters)
     return characters
 
 
 def get_character_from_db(character_id: int, crud: CRUD):
-    db_character = crud.read(Character, character_id)
+    db_character = crud.read(Character, 
+                             filters={"id":character_id},
+                             relationships=["skills", "properties"],
+                             single=True)
     if db_character is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_character

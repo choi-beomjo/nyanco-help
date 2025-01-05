@@ -2,6 +2,7 @@ import EnemyListView from "@/views/enemy/EnemyListView.vue";
 import EnemyEdit from '@/views/enemy/EnemyEdit.vue';
 import AddEnemy from '@/views/enemy/AddEnemy.vue';
 import EnemySearch from "@/views/enemy/EnemySearch.vue";
+import RecommendChracters from "@/views/enemy/RecommendChracters.vue";
 
 
 export default [
@@ -9,4 +10,5 @@ export default [
   { path: "/enemy/edit/:id", component: EnemyEdit, props: true },
   { path: "/enemy/add", component: AddEnemy},
   { path: "/enemy/search", component: EnemySearch},
+  { path: "/recommend/:id", component: RecommendChracters, props: true},
 ];

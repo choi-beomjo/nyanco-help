@@ -7,3 +7,4 @@ class Tags(Enum):
     skill="Skill"
     property="Property"
     character="Character"
+    recommend="Recommend"

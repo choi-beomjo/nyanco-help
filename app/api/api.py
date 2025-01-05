@@ -6,6 +6,7 @@ from .domain.enemy.api import router as enemy_router
 from .domain.skill.api import router as skill_router
 from .domain.property.api import router as property_router
 from .domain.character.api import router as character_router
+from .domain.recommend.api import router as recommend_router
 
 api = APIRouter()
 api.include_router(board_router, prefix="/board")
@@ -14,3 +15,4 @@ api.include_router(character_router, prefix="/character")
 api.include_router(enemy_router, prefix="/enemy")
 api.include_router(skill_router, prefix="/skill")
 api.include_router(property_router, prefix="/property")
+api.include_router(recommend_router, prefix="/recommend")

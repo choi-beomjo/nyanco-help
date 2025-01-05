@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
+from sqlalchemy.orm import joinedload, subqueryload
 from fastapi import Depends
 
 
@@ -21,10 +22,27 @@ class CRUD:
         self.session.refresh(obj)
         return obj
 
-    def read(self, model, obj_id):
-        return self.session.query(model).filter(model.id == obj_id).first()
+    def read(self, model, filters=None,  # 필터 조건
+        relationships=None,  # 로드할 관계 목록
+        single=True  # 단일 객체 반환 여부
+    ):
+        query = self.session.query(model)
 
-    def read_all(self, model, **kwargs):
+        # 관계 로드 처리
+        if relationships:
+            for rel in relationships:
+                query = query.options(joinedload(getattr(model, rel)))
+
+        # 필터 적용
+        if filters:
+            for key, value in filters.items():
+                column = getattr(model, key)
+                query = query.filter(column == value)
+
+        # 결과 반환
+        return query.first() if single else query.all()
+
+    def read_all(self, model, relationships=None, custom_conditions=None, **kwargs):
         query = self.session.query(model)
         for key, value in kwargs.items():
             column = getattr(model, key)
@@ -44,6 +62,10 @@ class CRUD:
                     query = query.filter(column.in_(value))
                 else:
                     query = query.filter(column == value)
+
+        if custom_conditions:
+            for condition in custom_conditions:
+                query = query.filter(condition)
         return query.all()
 
     def update(self, model, obj_id, **kwargs):
