@@ -8,6 +8,7 @@
           :key="enemy.id"
           :enemy="enemy"
           @edit="goToEdit"
+          @recommend="recommendEnemy(enemy.id)"
         />
       </ul>
     </div>
@@ -58,6 +59,9 @@
       },
       goSearch(){
         this.$router.push("/enemy/search");
+      },
+      recommendEnemy(id){
+        this.$router.push(`/recommend/${id}`)
       }
     },
   };

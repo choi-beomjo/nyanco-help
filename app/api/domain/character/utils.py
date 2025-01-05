@@ -24,7 +24,10 @@ def get_characters_from_db(crud: CRUD, character_info={}, skills=None, propertie
 
 
 def get_character_from_db(character_id: int, crud: CRUD):
-    db_character = crud.read(Character, character_id)
+    db_character = crud.read(Character, 
+                             filters={"id":character_id},
+                             relationships=["skills", "properties"],
+                             single=True)
     if db_character is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_character

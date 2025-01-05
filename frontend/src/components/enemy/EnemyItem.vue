@@ -8,6 +8,7 @@
       <strong>Skills:</strong> {{ enemy.skills }},
       <strong>Properties</strong> {{ enemy.properties }}
       <button @click="$emit('edit', enemy.id)">Edit</button>
+      <button @click="$emit('recommend', enemy)">Recommend</button>
     </li>
   </template>
   
