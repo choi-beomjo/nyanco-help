@@ -17,8 +17,10 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD=Depends(get_crud)
     
     characters = get_recommend_characters_by_property(enemy_info=enemy, crud=crud)
     characters_by_range = get_recommend_characters_by_range(enemy, crud)
+    characters_by_skill = get_recommend_characters_by_skills(enemy, crud)
     return { 
         "characters_by_properties": [CharacterInfo.from_orm(character) for character in characters],
-        "characters_by_range": [CharacterInfo.from_orm(character) for character in characters_by_range]
+        "characters_by_range": [CharacterInfo.from_orm(character) for character in characters_by_range],
+        "characters_by_skills": characters_by_skill
     }
     
