@@ -36,6 +36,24 @@
         <p>No characters by property found.</p>
       </div>
   
+
+      <!-- Skills 캐릭터 리스트 -->
+      <div v-if="enemiesBySkill.length">
+        <h2>Characters by Skills</h2>
+        <ul>
+          <CharacterItem
+            v-for="character in enemiesBySkill"
+            :key="character.id"
+            :character="character"
+            @edit="goToEdit"
+            :showEditButton="false"
+          />
+        </ul>
+      </div>
+      <div v-else>
+        <p>No characters by skill found.</p>
+      </div>
+
       <BackButton target="/enemy-list"/>
     </div>
   </template>
@@ -56,6 +74,7 @@
       return {
         enemiesByRange: [], // range 캐릭터 데이터 저장
         enemiesByProperty: [], // property 캐릭터 데이터 저장
+        enemiesBySkill: [],
       };
     },
     created() {
@@ -78,6 +97,7 @@
           // 응답에서 characters_by_range와 characters_by_property를 각각 분리하여 저장
           this.enemiesByRange = response.characters_by_range;
           this.enemiesByProperty = response.characters_by_properties;
+          this.enemiesBySkill = response.characters_by_skills;
         } catch (error) {
           console.error("Error fetching enemies:", error);
         }

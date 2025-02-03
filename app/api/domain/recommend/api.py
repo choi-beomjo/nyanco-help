@@ -21,6 +21,6 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD=Depends(get_crud)
     return { 
         "characters_by_properties": [CharacterInfo.from_orm(character) for character in characters],
         "characters_by_range": [CharacterInfo.from_orm(character) for character in characters_by_range],
-        "characters_by_skills": characters_by_skill
+        "characters_by_skills": [CharacterInfo.from_orm(character) for character in characters_by_skill]
     }
     
