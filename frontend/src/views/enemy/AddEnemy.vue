@@ -1,32 +1,33 @@
 <template>
+  <div class="enemy-edit-container">
   <h1>Add Enemy</h1>
   <form @submit.prevent="onSubmit">
     <!-- Name Input -->
-    <div>
+    <div class="form-group">
       <label for="name">Name:</label>
       <input type="string" id="name" v-model="enemy.name" />
     </div>
 
     <!-- Attack Input -->
-    <div>
+    <div class="form-group">
       <label for="atk">Attack:</label>
       <input type="number" id="atk" v-model="enemy.atk" />
     </div>
 
     <!-- Health Input -->
-    <div>
+    <div class="form-group">
       <label for="hp">Health:</label>
       <input type="number" id="hp" v-model="enemy.hp" />
     </div>
 
     <!-- Range Input -->
-    <div>
+    <div class="form-group">
       <label for="range">Range:</label>
       <input type="number" id="range" v-model="enemy.range" />
     </div>
 
     <!-- Skills Selection -->
-    <div>
+    <div class="checkbox-group">
       <h2>Skills</h2>
       <div v-for="skill in skills" :key="skill.id">
         <label :for="'skill-' + skill.id">
@@ -44,7 +45,7 @@
     <!-- Properties Selection -->
     <div>
       <h2>Properties</h2>
-      <div v-for="property in properties" :key="property.id">
+      <div class="checkbox-group" v-for="property in properties" :key="property.id">
         <label :for="'property-' + property.id">
           <input
             type="checkbox"
@@ -60,12 +61,14 @@
     <button type="submit">Create Enemy</button>
   </form>
   <BackButton target="/enemy-list" />
+  </div>
 </template>
 
 <script>
 import axios from "@/services/axios";
 import { fetchList } from "@/services/apiService.js";
 import BackButton from "@/components/common/BackButton.vue";
+import "@/assets/css/EnemyEdit.css"; // CSS 적용
 
 export default {
   components:{

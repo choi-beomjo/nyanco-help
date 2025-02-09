@@ -96,3 +96,51 @@
     text-decoration: underline;
   }
   
+  /* ✅ 체크박스 그룹 기본 스타일 */
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* ✅ 체크된 항목 스타일 변경 */
+.checkbox-group input[type="checkbox"]:checked + span {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.checkbox-group input[type="checkbox"]:checked + span {
+  color: #007bff; /* 체크된 글자 색상 */
+}
+
+/* ✅ 체크된 경우 label 스타일 변화 */
+.checkbox-group input[type="checkbox"]:checked + span::before {
+  content: "✔ ";
+  font-size: 14px;
+  color: #007bff; /* 체크 표시 */
+}
+
+.checkbox-group input[type="checkbox"]:checked + span {
+  background: #dfe9ff; /* 연한 파란색 배경 */
+  padding: 8px 12px;
+  border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 255, 0.2);
+}
+
+/* ✅ 체크된 경우 호버 스타일 */
+.checkbox-group input[type="checkbox"]:checked + span:hover {
+  transform: scale(1.05);
+  background: #c2d5ff; /* 더 진한 파란색 */
+}

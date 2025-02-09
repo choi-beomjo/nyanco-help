@@ -2,7 +2,7 @@
     <div class="filter-container">
       <!-- Skills Selection -->
       <h2>Skills</h2>
-      <div class="filter-group">
+      <div class="checkbox-group">
         <div v-for="skill in skills" :key="skill.id">
           <label :for="'skill-' + skill.id">
             <input
@@ -12,14 +12,14 @@
               v-model="selectedSkills"
             />
             <span v-html="getSkillIcon(skill.name)"></span>
-            {{ skill.name }}
+            <span>{{ skill.name }}</span>
           </label>
         </div>
       </div>
   
       <!-- Properties Selection -->
       <h2>Properties</h2>
-      <div class="filter-group">
+      <div class="checkbox-group">
        
           <label
           v-for="property in properties"
@@ -35,7 +35,7 @@
               v-model="selectedProperties"
             />
             
-            {{ property.name }}
+            <span>{{ property.name }}</span>
           </label>
 
       </div>
