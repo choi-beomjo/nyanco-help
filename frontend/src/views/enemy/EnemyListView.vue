@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="enemy-list-container">
     <h1>Enemy List</h1>
     <div v-if="enemies.length">
-      <ul>
+      <ul class="enemy-list">
         <EnemyItem
           v-for="enemy in enemies"
           :key="enemy.id"
@@ -13,7 +13,7 @@
       </ul>
     </div>
     <div v-else>
-      <p>No enemies found.</p>
+      <p class="no-enemies">No enemies found.</p>
     </div>
     <BackButton />
     <button @click="goAdd">Add Enemy</button>
@@ -22,6 +22,7 @@
 </template>
   
   <script>
+  import "@/assets/css/EnemyList.css";
   import EnemyItem from "@/components/enemy/EnemyItem.vue";
   import { fetchList } from "@/services/apiService.js";
   import BackButton from "@/components/common/BackButton.vue";

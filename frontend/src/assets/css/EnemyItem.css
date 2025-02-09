@@ -1,0 +1,189 @@
+.enemy-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  
+  .enemy-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .enemy-info {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5px 15px;
+    padding: 10px 0;
+  }
+  
+  .enemy-info strong {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .skill-list, .property-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+  }
+  
+  .skill-tag {
+    background: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .property-tag {
+    background: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .enemy-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .enemy-actions button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .enemy-actions button:first-child {
+    background: #ffcc00;
+    color: #333;
+  }
+  
+  .enemy-actions button:last-child {
+    background: #007bff;
+    color: white;
+  }
+  
+  .enemy-actions button:hover {
+    opacity: 0.8;
+  }
+
+  .property-tag {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    white-space: nowrap;
+  }
+  
+  .property-red {
+    background: #ff4d4d;
+  }
+  
+  .property-white {
+    background: #d9d9d9;
+    color: black;
+  }
+  
+  .property-metal {
+    background: #b0c4de;
+    color: black;
+  }
+  
+  .property-blue {
+    background: #007bff;
+  }
+  
+  .property-green {
+    background: #28a745;
+  }
+  
+  .property-black {
+    background: #333;
+  }
+  
+  .property-yellow {
+    background: #ffcc00;
+    color: black;
+  }
+  
+  .property-navy {
+    background: #001f3f;
+  }
+  
+  .property-purple {
+    background: #800080;
+  }
+  
+  .property-sky {
+    background: #87ceeb;
+    color: black;
+  }
+  
+  .property-default {
+    background: #777;
+  }
+  
+  
+  .skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+  }
+  
+  .skill-tag {
+    background: #f0f0f0;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .skill-tag i {
+    font-size: 14px;
+    color: #555;
+  }
+  
+
+  .fa-stack {
+    display: inline-block;
+    position: relative;
+    width: 1.5em;
+    height: 1.5em;
+    line-height: 1em;
+  }
+  
+  .fa-stack-1x {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  
+  .fa-stack-2x {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1.2em;
+  opacity: 0.8; /* 두 번째 아이콘이 잘 보이도록 투명도 조절 */
+  }
