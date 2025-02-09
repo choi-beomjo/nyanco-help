@@ -1,0 +1,98 @@
+.filter-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  /* 📌 체크박스 그룹을 그리드 형태로 배치 */
+  .filter-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  /* 체크박스 항목 디자인 개선 */
+  .filter-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .filter-group label:hover {
+    background: #f0f0f0;
+  }
+  
+  /* 체크박스 크기 조정 */
+  .filter-group input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
+  }
+  
+  /* 필터 버튼 스타일 */
+  button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+  }
+  
+  button:hover {
+    background: #0056b3;
+  }
+
+
+/* ✅ 속성(Property)의 색상이 적용된 체크박스 스타일 */
+.property-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, background 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    text-align: center;
+    color: white; /* 기본 글자색 */
+  }
+  
+  /* ✅ 마우스를 올렸을 때 효과 */
+  .property-label:hover {
+    transform: scale(1.05);
+  }
+  
+  /* ✅ 체크박스 숨기기 (배경색만 남기기) */
+  .property-label input[type="checkbox"] {
+    display: none;
+  }
+  
+  /* ✅ 체크된 경우 스타일 변경 */
+  .property-label input[type="checkbox"]:checked + span {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  

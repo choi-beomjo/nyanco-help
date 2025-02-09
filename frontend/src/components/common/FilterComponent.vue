@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div class="filter-container">
       <!-- Skills Selection -->
-      <div>
-        <h2>Skills</h2>
+      <h2>Skills</h2>
+      <div class="filter-group">
         <div v-for="skill in skills" :key="skill.id">
           <label :for="'skill-' + skill.id">
             <input
@@ -11,25 +11,33 @@
               :value="skill.id"
               v-model="selectedSkills"
             />
+            <span v-html="getSkillIcon(skill.name)"></span>
             {{ skill.name }}
           </label>
         </div>
       </div>
   
       <!-- Properties Selection -->
-      <div>
-        <h2>Properties</h2>
-        <div v-for="property in properties" :key="property.id">
-          <label :for="'property-' + property.id">
+      <h2>Properties</h2>
+      <div class="filter-group">
+       
+          <label
+          v-for="property in properties"
+          :key="property.id"
+          :for="'property-' + property.id"
+          :style="{ backgroundColor: getPropertyColor(property.name), color: getTextColor(property.name) }"
+          class="property-label"
+        >
             <input
               type="checkbox"
               :id="'property-' + property.id"
               :value="property.id"
               v-model="selectedProperties"
             />
+            
             {{ property.name }}
           </label>
-        </div>
+
       </div>
   
       <!-- Filter Button -->
@@ -52,6 +60,8 @@
   
   <script>
 import axios from "@/services/axios";
+import "@/assets/css/FilterComponent.css";
+import { useIconAndColor } from "@/composables/useIconAndColor.js";
 export default {
     props: {
       skills: Array,
@@ -59,6 +69,15 @@ export default {
       apiEndpoint: String, // API 엔드포인트를 전달받음
       itemType: String, // 적군 또는 캐릭터 이름
     },
+    setup() {
+    const { getSkillIcon, getPropertyColor, getTextColor } = useIconAndColor();
+
+    return {
+      getSkillIcon,
+      getPropertyColor,
+      getTextColor,
+    };
+  },
     data() {
       return {
         selectedSkills: [],
