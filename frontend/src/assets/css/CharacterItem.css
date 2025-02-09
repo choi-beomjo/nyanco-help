@@ -1,4 +1,4 @@
-.enemy-item {
+.character-item {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -8,76 +8,77 @@
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  }
-  
-  .enemy-item:hover {
+}
+
+.character-item:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  }
-  
-  .enemy-info {
+}
+
+.character-info {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 5px 15px;
     padding: 10px 0;
-  }
-  
-  .enemy-info strong {
+}
+
+.character-info strong {
     font-weight: bold;
     color: #555;
-  }
-  
-  .skill-list, .property-list {
+}
+
+.skill-list, .property-list {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     margin-top: 5px;
-  }
-  
-  .skill-tag {
+}
+
+.skill-tag {
     background: #007bff;
     color: white;
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 12px;
     white-space: nowrap;
-  }
-  
-  .property-tag {
-    background: #28a745;
-    color: white;
+}
+
+.property-tag {
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 12px;
     white-space: nowrap;
-  }
-  
-  .enemy-actions {
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.property-tag:hover {
+    transform: scale(1.05);
+}
+
+.character-actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 10px;
-  }
-  
-  .enemy-actions button {
+}
+
+.character-actions button {
     padding: 8px 12px;
     font-size: 14px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s ease;
-  }
-  
-  .enemy-actions button:first-child {
+}
+
+.character-actions button {
     background: #ffcc00;
     color: #333;
-  }
-  
-  .enemy-actions button:last-child {
-    background: #007bff;
-    color: white;
-  }
-  
-  .enemy-actions button:hover {
+}
+
+.character-actions button:hover {
     opacity: 0.8;
-  }
+}
