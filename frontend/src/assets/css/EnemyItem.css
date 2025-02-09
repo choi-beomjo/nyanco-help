@@ -83,12 +83,20 @@
   }
 
   .property-tag {
+    display: inline-block;
     padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
+    margin: 2px;
+    border-radius: 5px;
+    font-size: 14px;
     font-weight: bold;
-    color: white;
-    white-space: nowrap;
+    text-align: center;
+    min-width: 80px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .property-tag:hover {
+    transform: scale(1.05);
   }
   
   .property-red {

@@ -16,10 +16,11 @@
       <strong>Properties</strong>
       <div class="property-list">
         <span
-          v-for="property in enemy.properties"
-          :key="property.id"
-          :class="['property-tag', getPropertyClass(property.name)]"
-        >
+    v-for="property in enemy.properties"
+    :key="property.id"
+    :style="{ backgroundColor: getPropertyColor(property.name), color: getTextColor(property.name) }"
+    class="property-tag"
+  >
           {{ property.name }}
         </span>
       </div>
@@ -34,6 +35,7 @@
 <script>
 import "@/assets/css/EnemyItem.css";
 import "@fortawesome/fontawesome-free/css/all.css"; // Font Awesome Import
+import { useIconAndColor } from "@/composables/useIconAndColor";
 export default {
   props: {
     enemy: {
@@ -41,44 +43,16 @@ export default {
       required: true,
     },
   },
+  setup() {
+    const { getSkillIcon, getPropertyColor, getTextColor } = useIconAndColor();
+
+    return {
+      getSkillIcon,
+      getPropertyColor,
+      getTextColor,
+    };
+  },
   methods: {
-    getPropertyClass(property) {
-      const propertyColors = {
-        red: "property-red",
-        white: "property-white",
-        metal: "property-metal",
-        angel: "property-yellow",
-        zombie: "property-purple",
-        black: "property-black",
-        devil: "property-navy",
-        fly: "property-green",
-        alien: "property-sky"
-      };
-      return propertyColors[property.toLowerCase()] || "property-default";
-    },
-    getSkillIcon(skill) {
-      const skillIcons = {
-        "멈추기": `<i class="fas fa-clock"></i>`, // 🕰️ 시계
-        "멈추기 무효": `
-            <i class="fas fa-clock"></i>
-            <i class="fas fa-ban margin-left: 5px"></i>
-        `, // 🕰️+🚫 (시계+금지)
-        "엄청 강하다": `<i class="fas fa-hand-rock"></i>`, // ✊ 권투 글러브
-        "방어력 증가": `<i class="fas fa-shield-alt"></i>`, // 🛡️ 방패
-        "파동": `<i class="fas fa-wave-square"></i>`, // 🌊 파동
-        "독 데미지": `<i class="fas fa-skull-crossbones"></i>`, // ☠️ 독
-        "날려버린다": `<i class="fas fa-wind"></i>`, // 💨 바람
-        "공격력 업":`
-            <i class="fas fa-hammer"></i>
-            <i class="fas fa-arrow-up margin-left: 5px"></i>
-        `,
-        "느리게 한다":`
-          <i class="fas fa-running"></i>
-          <i class="fas fa-arrow-down margin-left: 5px"></i>
-        `,
-      };
-      return skillIcons[skill] ||  `<i class="fas fa-question-circle"></i>`; // ❓ 기본 아이콘
-    },
   },
 };
 </script>
