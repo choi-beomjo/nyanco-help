@@ -67,6 +67,32 @@ class CRUD:
             for condition in custom_conditions:
                 query = query.filter(condition)
         return query.all()
+    
+    
+    def join_read(self, model, joins=None, filters=None, fields=None, single=False):
+        """
+        동적으로 JOIN을 수행하는 메서드
+        :param model: 조회할 메인 모델 (예: Stage)
+        :param joins: JOIN할 관계 (예: {"enemies": Enemy})
+        :param filters: 필터 조건 (예: {"id": 1})
+        :param fields: 반환할 필드 목록 (예: [Stage.name, Enemy.name])
+        :param single: 단일 객체 반환 여부
+        """
+        query = self.session.query(*fields) if fields else self.session.query(model)
+
+        # Explicit JOIN 적용
+        if joins:
+            for rel_name, rel_model in joins.items():
+                rel_attr = getattr(model, rel_name)
+                query = query.join(rel_attr)
+
+        # 필터 적용
+        if filters:
+            for key, value in filters.items():
+                column = getattr(model, key)
+                query = query.filter(column == value)
+
+        return query.first() if single else query.all()
 
     def update(self, model, obj_id, **kwargs):
         obj = self.session.query(model).filter(model.id == obj_id).first()

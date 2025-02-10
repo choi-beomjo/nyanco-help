@@ -29,3 +29,4 @@ class Enemy(Base):
     skills = relationship("Skill", secondary=enemy_skills, back_populates="enemies")
     properties = relationship("Property", secondary=enemy_properties, back_populates="enemies")
 
+    stages = relationship("StageEnemy", back_populates="enemy")
