@@ -44,17 +44,33 @@
       <button @click="filterItems">Filter</button>
   
       <!-- Filtered Items List -->
-      <div v-if="items.length > 0">
-        <h2>Filtered {{ itemType }}</h2>
-        <ul>
-          <li v-for="item in items" :key="item.id">
-            {{ item.name }} - ATK: {{ item.atk }}, HP: {{ item.hp }}
-          </li>
-        </ul>
-      </div>
-      <div v-else>
-        <p>No {{ itemType.toLowerCase() }} match the selected filters.</p>
-      </div>
+    <div class="filtered-list" v-if="items.length > 0">
+      <h2>Filtered {{ itemType }}</h2>
+      <ul>
+        <li v-for="item in items" :key="item.id">
+          <strong>{{ item.name }}</strong>
+          <div>ATK: {{ item.atk }}, HP: {{ item.hp }}</div>
+
+          <!-- 스킬 리스트 -->
+          <div class="skill-list">
+            <span v-for="skill in item.skills" :key="skill.id" class="skill-tag">
+              {{ skill.name }}
+            </span>
+          </div>
+
+          <!-- 속성 리스트 -->
+          <div class="property-list">
+            <span v-for="property in item.properties" :key="property.id" class="property-tag">
+              {{ property.name }}
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div v-else class="no-items">
+      <p>No {{ itemType.toLowerCase() }} match the selected filters.</p>
+    </div>
     </div>
   </template>
   

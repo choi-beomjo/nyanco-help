@@ -144,3 +144,82 @@
   transform: scale(1.05);
   background: #c2d5ff; /* 더 진한 파란색 */
 }
+
+/* ✅ 필터링된 항목 리스트 스타일 */
+.filtered-list {
+  margin-top: 20px;
+}
+
+.filtered-list h2 {
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* ✅ 리스트 스타일 */
+.filtered-list ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* ✅ 개별 아이템 카드 스타일 */
+.filtered-list li {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  min-width: 250px;
+  max-width: 300px;
+  text-align: center;
+}
+
+/* ✅ 호버 시 효과 */
+.filtered-list li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ 스킬과 속성 스타일 */
+.skill-list, .property-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.skill-tag, .property-tag {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* ✅ 스킬 태그 색상 */
+.skill-tag {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* ✅ 속성 태그 색상 */
+.property-tag {
+  background: #dfe9ff;
+  color: #007bff;
+}
+
+/* ✅ "No items found" 스타일 */
+.no-items {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+  margin-top: 20px;
+}
