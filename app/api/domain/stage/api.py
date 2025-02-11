@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from ...tags import Tags
 from utils.msg.msg import Msg
 #from .utils import *
-#from .schemas import *
+from .schemas import *
 from ..enemy.models import Enemy
 from .models import *
 from ...deps import get_current_user, get_crud, CRUD, admin_required
@@ -18,10 +18,20 @@ def get_stage_list(crud: CRUD = Depends(get_crud)):
 
 
 @router.post("")
-def post_stage(req, crud: CRUD = Depends(get_crud)):
+def post_stage(req: StageInfo, crud: CRUD = Depends(get_crud)):
     stage_info = req.dict()
 
     crud.create(Stage(**stage_info))
+
+
+@router.get("/{stage_id}")
+def get_stage_with_enemies(stage_id: int, crud: CRUD = Depends(get_crud)):
+    return crud.read(
+        model=Stage,
+        filters=dict(id=stage_id),
+        relationships=["enemies"]
+    )
+
 
 
 @router.post("/{stage_id}")
