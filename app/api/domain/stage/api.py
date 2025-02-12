@@ -12,8 +12,8 @@ router = APIRouter()
 
 @router.get("")
 def get_stage_list(crud: CRUD = Depends(get_crud)):
-    
-    return crud.join_read(Stage)
+    stages = crud.join_read(Stage)
+    return [StageInfo.from_orm(stage) for stage in stages]
 
 
 
@@ -26,11 +26,14 @@ def post_stage(req: StageInfo, crud: CRUD = Depends(get_crud)):
 
 @router.get("/{stage_id}")
 def get_stage_with_enemies(stage_id: int, crud: CRUD = Depends(get_crud)):
-    return crud.read(
+    stage = crud.read(
         model=Stage,
         filters=dict(id=stage_id),
         relationships=["enemies"]
     )
+    stage = stage.__dict__
+    enemies = [crud.read(Enemy, filters=dict(id=enemy.__dict__["enemy_id"])) for enemy in stage["enemies"]]
+    return StageInfo(name=stage["name"], enemies=enemies)
 
 
 
