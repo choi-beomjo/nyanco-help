@@ -37,7 +37,7 @@ def get_stage_with_enemies(stage_id: int, crud: CRUD = Depends(get_crud)):
 
 
 
-@router.post("/{stage_id}")
+@router.post("/{stage_id}/enemy")
 def add_enemy_to_stage(stage_id: int, enemy_id: int, crud: CRUD = Depends(get_crud)):
     
     enemy = crud.read(Enemy, filters=dict(id=enemy_id), single=True)
@@ -62,3 +62,9 @@ def add_enemy_to_stage(stage_id: int, enemy_id: int, crud: CRUD = Depends(get_cr
 @router.post("/search")
 def search_stages_from_enemies():
     pass
+
+
+@router.get("/{enemy_id}/stage")
+def search_stages_from_enemies(enemy_id: int, crud: CRUD=Depends(get_crud)):
+    
+    return crud.read(Enemy, filters=dict(id=enemy_id), relationships=["stages"])
