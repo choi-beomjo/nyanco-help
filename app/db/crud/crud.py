@@ -5,7 +5,7 @@ from fastapi import Depends
 
 
 engine = create_engine(
-    "sqlite:///./myapi.db",
+    "sqlite:////myapi.db",
     pool_recycle=500, pool_size=5, max_overflow=20, echo=False, echo_pool=True 
 )
 
@@ -68,7 +68,7 @@ class CRUD:
                 query = query.filter(condition)
         return query.all()
     
-    
+
     def join_read(self, model, joins=None, filters=None, fields=None, single=False):
         """
         동적으로 JOIN을 수행하는 메서드
