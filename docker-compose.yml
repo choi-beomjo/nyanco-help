@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  fastapi:
+    build: .
+    container_name: fastapi_app
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app  # 로컬 코드 변경 자동 반영
+      - ./myapi.db:/myapi.db  # SQLite 데이터 파일 유지
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
