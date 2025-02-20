@@ -36,7 +36,7 @@ pipeline {
                 sh '''
                 docker stop nyanco || true
                 docker rm nyanco || true
-                docker run -d --name nyanco -p 8000:8000 nyanco
+                sudo docker compose up -d
                 '''
             }
         }
