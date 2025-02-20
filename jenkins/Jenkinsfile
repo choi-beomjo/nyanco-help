@@ -29,6 +29,7 @@ pipeline {
             steps {
                 sh '''
                 pwd 
+                ls -lrth
                 docker-compose up -d
                 '''
             }
