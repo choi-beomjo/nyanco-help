@@ -16,7 +16,9 @@ pipeline {
         }
 
         stage("First build"){
-            sh 'docker build -t nyanco .'
+            steps{
+                sh 'docker build -t nyanco .'
+            }
         }
 
         stage('Build') {
