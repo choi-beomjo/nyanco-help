@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+    stage('Check for Dependencies Change') {
+            steps {
+                script {
+                    def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
+                    if (changes.contains("requirements.txt")) {
+                        env.BUILD_DOCKER = "true"
+                    } else {
+                        env.BUILD_DOCKER = "false"
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            when {
+                expression { env.BUILD_DOCKER == "true" }
+            }
+            steps {
+                sh 'docker build -t nyanco .'
+            }
+        }
+
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                docker stop nyanco || true
+                docker rm nyanco || true
+                docker run -d --name nyanco -p 8000:8000 nyanco
+                '''
+            }
+        }
+    }
+}
