@@ -28,8 +28,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                pwd 
-                ls -lrth
+                docker-compose down
+                docker-compose build --no-cache
                 docker-compose up -d
                 '''
             }

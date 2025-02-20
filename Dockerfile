@@ -9,4 +9,4 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # FastAPI 앱 코드 복사
-COPY . .
+COPY app /app
