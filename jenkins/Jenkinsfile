@@ -15,6 +15,10 @@ pipeline {
             }
         }
 
+        stage("First build"){
+            sh 'docker build -t nyanco .'
+        }
+
         stage('Build') {
             when {
                 expression { env.BUILD_DOCKER == "true" }
