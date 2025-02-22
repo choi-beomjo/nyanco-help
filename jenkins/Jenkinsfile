@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'nyanco-backend'
+        CONTAINER_NAME = 'nyanco'
+        APP_PORT = '8000'
+    }
+
     stages {
     stage('Check for Dependencies Change') {
             steps {
@@ -23,6 +29,26 @@ pipeline {
                 sh 'docker build -t nyanco .'
             }
         }
+        stage('Stop and Remove Existing Container') {
+            steps {
+                sh '''
+                    echo "🛑 기존 컨테이너 중지 및 삭제..."
+                    docker stop $CONTAINER_NAME || true
+                    docker rm $CONTAINER_NAME || true
+                    echo "✅ 기존 컨테이너 삭제 완료"
+                '''
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    echo "🔨 Docker 이미지 빌드 시작..."
+                    docker build -t $IMAGE_NAME .
+                    echo "✅ Docker 이미지 빌드 완료"
+                '''
+            }
+        }
 
 
         stage('Deploy') {
@@ -34,6 +60,15 @@ pipeline {
                     -v $(pwd)/myapi.db:/myapi.db \
                     nyanco-backend \
                     python3 -m uvicorn main:app --host 0.0.0.0 --port 8000
+                '''
+            }
+        }
+
+        stage('Verify Running Container') {
+            steps {
+                sh '''
+                    echo "🔍 실행 중인 컨테이너 확인..."
+                    docker ps | grep $CONTAINER_NAME
                 '''
             }
         }
