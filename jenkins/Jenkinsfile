@@ -28,8 +28,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                docker compose down
-                docker compose up --build --remove-orphans
+                docker run -d --name nyanco \
+                    -p 8000:8000 \
+                    -v $(pwd)/app:/app \
+                    -v $(pwd)/myapi.db:/myapi.db \
+                    nyanco-backend \
+                    python3 -m uvicorn main:app --host 0.0.0.0 --port 8000
                 '''
             }
         }
