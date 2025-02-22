@@ -28,6 +28,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
+                cd /var/jenkins_home/workspace/nyanco-backend
                 docker compose down
                 docker compose up -d
                 '''
