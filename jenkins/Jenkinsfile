@@ -54,12 +54,16 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                docker run -d --name nyanco \
-                    -p 8000:8000 \
+                echo "🚀 새 컨테이너 실행 중..."
+                    docker run -d --name $CONTAINER_NAME \
+                    -p $APP_PORT:$APP_PORT \
                     -v $(pwd)/app:/app \
                     -v $(pwd)/myapi.db:/myapi.db \
-                    nyanco-backend \
-                    python3 -m uvicorn main:app --host 0.0.0.0 --port 8000
+                    -e PYTHONPATH=/app \
+                    -w /app \
+                    $IMAGE_NAME \
+                    python3 -m uvicorn main:app --host 0.0.0.0 --port $APP_PORT
+                    echo "✅ 새 컨테이너 실행 완료"
                 '''
             }
         }
