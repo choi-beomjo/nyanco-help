@@ -1,5 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, MetaData
+from app.db.crud.crud import engine
 
 Base = declarative_base()
 naming_convention = {
@@ -10,3 +11,4 @@ naming_convention = {
     "pk": "pk_%(table_name)s"
 }
 Base.metadata = MetaData(naming_convention=naming_convention)
+Base.metadata.create_all(bind=engine)
