@@ -4,9 +4,10 @@ from typing import List, Optional
 
 
 class User(BaseModel):
-    id:     str
+    id:     int
     name:   str
     email:  str
+    is_admin: bool
 
     class Config:
         orm_mode = True
