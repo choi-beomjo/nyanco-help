@@ -4,6 +4,11 @@ import uvicorn
 
 from api.api import api
 
+from db.init_db import init_db
+
+init_db()
+
+
 app = FastAPI()
 
 app.add_middleware(
