@@ -7,7 +7,7 @@ from fastapi import Depends
 
 engine = create_engine(
     "mysql+pymysql://admin:root1234@nyanco-db.cpm0s8oumjwn.ap-northeast-2.rds.amazonaws.com:3306/nyanco-db",
-    pool_recycle=500, pool_size=5, max_overflow=20, echo=False, echo_pool=True 
+    pool_recycle=500, pool_size=5, max_overflow=20, echo=True, echo_pool=True 
 )
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
