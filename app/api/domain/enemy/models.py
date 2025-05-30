@@ -20,7 +20,7 @@ class Enemy(Base):
     __tablename__ = "enemies"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
+    name = Column(String(100), nullable=False)
     atk = Column(Integer, nullable=False)
     hp = Column(Integer, nullable=False)
     range = Column(Integer, nullable=False)

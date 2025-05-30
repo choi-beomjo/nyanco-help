@@ -17,6 +17,6 @@ class Stage(Base):
     __tablename__ = "stages"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
+    name = Column(String(100), nullable=False)
 
     enemies = relationship("StageEnemy", back_populates="stage")

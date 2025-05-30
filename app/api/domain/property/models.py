@@ -9,6 +9,6 @@ from ..character.models import character_properties
 class Property(Base):
     __tablename__ = 'properties'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, unique=True, nullable=False)
+    name = Column(String(100), unique=True, nullable=False)
     enemies = relationship("Enemy", secondary=enemy_properties, back_populates="properties")
     characters = relationship("Character", secondary=character_properties, back_populates="properties")
