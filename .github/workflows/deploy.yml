@@ -2,8 +2,7 @@ name: Deploy to Artifact Registry
 
 on:
   push:
-    branches:
-      - main  # 혹은 원하는 브랜치
+    branches: [ develop ]
 
 jobs:
   deploy:
