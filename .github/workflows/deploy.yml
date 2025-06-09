@@ -34,6 +34,7 @@ jobs:
         DB_URL: ${{ secrets.DB_URL }}
       run: |
         cd app
+        pip install alembic
         python -m alembic revision --autogenerate -m "Auto revision"
     
     - name: Run Alembic Migration
