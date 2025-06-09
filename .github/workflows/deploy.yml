@@ -28,3 +28,14 @@ jobs:
       run: |
         docker build -t asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_REPO_NAME }}/${{ secrets.IMAGE_NAME }} .
         docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_REPO_NAME }}/${{ secrets.IMAGE_NAME }}
+    
+    - name: Alembic revision
+      env:
+        DB_URL: ${{ secrets.DB_URL }}
+      run: |
+        alembic revision --autogenerate -m "Auto revision"
+    
+    - name: Run Alembic Migration
+      env:
+        DB_URL: ${{ secrets.DB_URL }}
+      run: alembic upgrade head

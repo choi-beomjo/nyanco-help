@@ -25,7 +25,8 @@ class Character(Base):
     hp = Column(Integer, nullable=False)
     range = Column(Integer, nullable=False)
     grade = Column(String(50), nullable=False)
-
+    dps = Column(Integer, nullable=False)
+    cost = Column(Integer, nullable=False)
     # 관계 정의
     skills = relationship("Skill", secondary=character_skills, back_populates="characters")
     properties = relationship("Property", secondary=character_properties, back_populates="characters")
