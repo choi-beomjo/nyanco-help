@@ -46,4 +46,6 @@ jobs:
     - name: Run Alembic Migration
       env:
         DB_URL: ${{ secrets.DB_URL }}
-      run: python -m alembic upgrade head
+      run: 
+        cd app
+        alembic upgrade head
