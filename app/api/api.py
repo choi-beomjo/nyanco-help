@@ -10,6 +10,8 @@ from .domain.recommend.api import router as recommend_router
 from .domain.stage.api import router as stage_router
 
 api = APIRouter()
+
+# 게임 내 데이터 관련 API
 api.include_router(board_router, prefix="/board")
 api.include_router(user_router, prefix="/user")
 api.include_router(character_router, prefix="/character")
