@@ -2,11 +2,22 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from sqlalchemy.orm import joinedload, subqueryload
 from fastapi import Depends
+from sqlalchemy.engine.url import URL
+
+DATABASE_CONFIG = {
+    "drivername": "mysql+pymysql",
+    "username": "admin",
+    "password": "root1234",
+    "database": "nyanco-db",
+    "query": {
+        "unix_socket": "/cloudsql/shaped-timing-462302-m6:asia-northeast3:admin"
+    }
+}
 
 
 
 engine = create_engine(
-    "mysql+pymysql://admin:root1234@/nyanco-db?unix_socket=/cloudsql/shaped-timing-462302-m6:asia-northeast3:admin",
+    URL.create(**DATABASE_CONFIG),
     pool_recycle=500, pool_size=5, max_overflow=20, echo=True, echo_pool=True 
 )
 
