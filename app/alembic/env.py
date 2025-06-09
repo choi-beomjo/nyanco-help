@@ -6,15 +6,23 @@ from sqlalchemy import pool
 from alembic import context
 
 from sqlalchemy import text 
-# ❗ 여기서 모델들 import
-from api.domain.character.models import Character
-from api.domain.skill.models import Skill
-from api.domain.property.models import Property
-from api.domain.enemy.models import Enemy
-from api.domain.stage.models import Stage, StageEnemy
-from api.domain.user.models import User
-from api.domain.board.models import Post
 from model.base import Base
+# ❗ 여기서 모델들 import
+import os, glob, importlib.util
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+MODEL_GLOB = BASE_DIR / "api" / "domain" / "*" / "models.py"
+
+for model_path in glob.glob(str(MODEL_GLOB)):
+    module_name = (
+        Path(model_path).with_suffix("").relative_to(BASE_DIR).as_posix().replace("/", ".")
+    )
+    spec = importlib.util.spec_from_file_location(module_name, model_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
