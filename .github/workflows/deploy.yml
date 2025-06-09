@@ -29,6 +29,11 @@ jobs:
         docker build -t asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_REPO_NAME }}/${{ secrets.IMAGE_NAME }} .
         docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_REPO_NAME }}/${{ secrets.IMAGE_NAME }}
     
+    - name: Print DB URL
+      run: echo "DB_URL is $DB_URL"
+      env:
+        DB_URL: ${{ secrets.DB_URL }}
+
     - name: Alembic revision
       env:
         DB_URL: ${{ secrets.DB_URL }}
