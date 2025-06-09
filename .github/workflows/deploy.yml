@@ -29,19 +29,33 @@ jobs:
         docker build -t asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_REPO_NAME }}/${{ secrets.IMAGE_NAME }} .
         docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_REPO_NAME }}/${{ secrets.IMAGE_NAME }}
     
-    - name: Print DB URL
-      run: echo "DB_URL is $DB_URL"
-      env:
-        DB_URL: ${{ secrets.DB_URL }}
+    - name: Check for model changes
+      id: model_change_check
+      run: |
+        git fetch origin ${{ github.event.before }}
+        CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+        echo "Changed files:"
+        echo "$CHANGED_FILES"
+
+        if echo "$CHANGED_FILES" | grep -q 'app/api/domain/.*/models.py'; then
+          echo "model_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "model_changed=false" >> $GITHUB_OUTPUT
+        fi
 
     - name: Alembic revision
       env:
         DB_URL: ${{ secrets.DB_URL }}
+        MODEL_CHANGED: ${{ steps.model_change_check.outputs.model_changed }}
       run: |
         pip install -r requirements.txt
         cd app
         mkdir -p alembic/versions
-        alembic revision --autogenerate -m "Auto revision"
+        if [ "$MODEL_CHANGED" = "true" ]; then
+          alembic revision --autogenerate -m "Auto revision"
+        else
+          echo "No model changes, skipping revision"
+        fi
     
     - name: Run Alembic Migration
       env:
