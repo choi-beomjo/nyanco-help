@@ -11,9 +11,14 @@ from model.base import Base
 config = context.config
 
 import os
+# 🔥 핵심: 환경변수 강제 적용
 db_url = os.getenv("DB_URL")
+print(f"🔥 DB_URL = {db_url}")  # 확인용
 if db_url:
     config.set_main_option("sqlalchemy.url", db_url)
+else:
+    raise ValueError("환경변수 DB_URL이 설정되지 않았습니다.")
+
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
