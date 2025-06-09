@@ -5,6 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from sqlalchemy import text 
+
 from model.base import Base
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -75,6 +77,9 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
+        # 🔥 외래키 제약 조건 무시 (핵심)
+        connection.execute(text("SET FOREIGN_KEY_CHECKS=0"))
+
         context.configure(
             connection=connection, target_metadata=target_metadata
         )
