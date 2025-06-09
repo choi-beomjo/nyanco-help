@@ -18,9 +18,7 @@ for model_path in glob.glob(str(MODEL_GLOB)):
     module_name = (
         Path(model_path).with_suffix("").relative_to(BASE_DIR).as_posix().replace("/", ".")
     )
-    spec = importlib.util.spec_from_file_location(module_name, model_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    importlib.import_module(module_name)
 
 
 # this is the Alembic Config object, which provides
