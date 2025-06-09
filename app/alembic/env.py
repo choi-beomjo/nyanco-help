@@ -6,7 +6,14 @@ from sqlalchemy import pool
 from alembic import context
 
 from sqlalchemy import text 
-
+# ❗ 여기서 모델들 import
+from api.domain.character.models import Character
+from api.domain.skill.models import Skill
+from api.domain.property.models import Property
+from api.domain.enemy.models import Enemy
+from api.domain.stage.models import Stage, StageEnemy
+from api.domain.user.models import User
+from api.domain.board.models import Post
 from model.base import Base
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
