@@ -19,7 +19,7 @@ def get_property_list(crud: CRUD = Depends(get_crud)):
 def post_enemy(property_info: PropertyPost, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     
     property_data = property_info.dict()
-    if len(get_properties_from_db(crud=crud, property_info={"name": property_data['name']})) > 0:
+    if get_property_from_db(crud=crud, property_info={"name": property_data['name']}):
         raise HTTPException(status_code=409, detail="Property already exists")
     add_property_to_db(property_data=property_data, crud=crud)
 

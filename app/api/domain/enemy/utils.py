@@ -35,6 +35,10 @@ def get_enemy_from_db(enemy_id: int, crud: CRUD):
     return db_enemy
 
 
+def get_duplicate_enemy(enemy_info: dict, crud: CRUD):
+    return crud.read(Enemy, enemy_info)
+
+
 def update_enemy_from_db(enemy_id:int, enemy_data: dict, crud: CRUD):
     enemy_data['skills'] = [crud.read(Skill, skill_id) for skill_id in enemy_data['skills']]
     enemy_data['properties'] = [crud.read(Property, property_id) for property_id in enemy_data['properties']]

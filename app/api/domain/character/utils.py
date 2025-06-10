@@ -23,6 +23,10 @@ def get_characters_from_db(crud: CRUD, character_info={}, skills=None, propertie
     return characters
 
 
+def get_duplicate_character(character_info: dict, crud: CRUD):
+    return crud.read(Character, character_info)
+
+
 def get_character_from_db(character_id: int, crud: CRUD):
     db_character = crud.read(Character, 
                              filters={"id":character_id},

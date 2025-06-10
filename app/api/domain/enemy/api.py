@@ -22,7 +22,7 @@ def post_enemy(enemy_info: EnemyData, crud: CRUD = Depends(get_crud), current_us
     
     enemy_data = enemy_info.dict()
     # 이미 존재하는 적 검증
-    if len(get_enemies_from_db(crud=crud, enemy_info={"name": enemy_data['name']})) > 0:
+    if get_duplicate_enemy(crud=crud, enemy_info={"name": enemy_data['name']}):
         raise HTTPException(status_code=409, detail="Enemy already exists")
     add_enemy_to_db(enemy_data=enemy_data, crud=crud)
 
