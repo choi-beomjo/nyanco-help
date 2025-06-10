@@ -27,6 +27,14 @@ class Character(Base):
     grade = Column(String(50), nullable=False)
     dps = Column(Integer, nullable=False)
     cost = Column(Integer, nullable=False)
+    kb = Column(Integer, nullable=False)
+    target = Column(String(50), nullable=False)
+    tba = Column(Integer, nullable=False)
+    atk_sec = Column(Integer, nullable=False)
+    speed = Column(Integer, nullable=False)
+    recharing_time = Column(Integer, nullable=False)
+    spawn = Column(Integer, nullable=False)
+
     # 관계 정의
     skills = relationship("Skill", secondary=character_skills, back_populates="characters")
     properties = relationship("Property", secondary=character_properties, back_populates="characters")
