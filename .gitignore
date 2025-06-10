@@ -194,4 +194,5 @@ pyrightconfig.json
 
 *.db
 
+.github/workflows/deploy.yml_aws
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
