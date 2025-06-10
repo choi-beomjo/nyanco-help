@@ -11,6 +11,13 @@ class EnemyInfo(BaseModel):
     atk:    int
     hp:     int
     range:  int
+    kb:     int
+    dps:    int
+    money:  int
+    speed:  int
+    tba:    int
+    target: str
+    atk_sec:    int
     skills: Optional[List[SkillInfo]] = []
     properties: Optional[List[PropertyInfo]] = []
 
@@ -24,6 +31,13 @@ class EnemyData(BaseModel):
     atk:    int
     hp:     int
     range:  int
+    kb:     int
+    dps:    int
+    money:  int
+    speed:  int
+    tba:    int
+    target: str
+    atk_sec:    int
     skills: Optional[List[int]] = []
     properties: Optional[List[int]] = []
 
