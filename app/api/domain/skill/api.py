@@ -20,7 +20,7 @@ def post_enemy(skill_info: SkillPost, crud: CRUD = Depends(get_crud), current_us
     
     skill_data = skill_info.dict()
     # 이미 존재하는 적 검증
-    if len(get_skills_from_db(crud=crud, skill_info={"name": skill_info['name']})) > 0:
+    if len(get_skills_from_db(crud=crud, skill_info={"name": skill_data['name']})) > 0:
         raise HTTPException(status_code=409, detail="Skill already exists")
     add_skill_to_db(skill_data=skill_data, crud=crud)
 

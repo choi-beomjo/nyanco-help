@@ -6,7 +6,7 @@ from db.crud.crud import CRUD
 def get_properties_from_db(crud: CRUD, property_info={}):
     filters = {key: value for key, value in property_info if value}
 
-    properties = crud.read_all(Property)
+    properties = crud.read_all(Property, **filters)
 
     return properties
 
