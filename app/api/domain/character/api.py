@@ -21,6 +21,10 @@ def get_character_list(crud: CRUD = Depends(get_crud)):
 def post_character(character_info: CharacterData, crud: CRUD = Depends(get_crud), current_user=Depends(admin_required)):
     
     character_data = character_info.dict()
+    # 이미 존재하는 캐릭터 검증
+    if get_character_from_db(character_data['name'], crud=crud):
+        raise HTTPException(status_code=409, detail="Character already exists")
+    
     add_character_to_db(character_data=character_data, crud=crud)
 
     return Msg(msg="success")
