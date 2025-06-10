@@ -4,7 +4,7 @@ from db.crud.crud import CRUD
 
 
 def get_skills_from_db(crud: CRUD, skill_info={}):
-    filters = {key: value for key, value in skill_info if value}
+    filters = skill_info
 
     skills = crud.read_all(Skill, custom_conditions=[filters])
 
