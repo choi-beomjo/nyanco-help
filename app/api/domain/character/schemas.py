@@ -19,7 +19,6 @@ class CharacterInfo(BaseModel):
     tba:    int
     atk_sec:    int
     speed:    int
-    recharing_time:    int
     spawn:    int
     skills: Optional[List[SkillInfo]] = []
     properties: Optional[List[PropertyInfo]] = []
@@ -43,7 +42,6 @@ class CharacterData(BaseModel):
     tba:    int
     atk_sec:    int
     speed:    int
-    recharing_time:    int
     spawn:    int
     skills: Optional[List[int]] = []
     properties: Optional[List[int]] = []

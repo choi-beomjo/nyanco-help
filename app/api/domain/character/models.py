@@ -32,7 +32,6 @@ class Character(Base):
     tba = Column(Integer, nullable=False)
     atk_sec = Column(Integer, nullable=False)
     speed = Column(Integer, nullable=False)
-    recharing_time = Column(Integer, nullable=False)
     spawn = Column(Integer, nullable=False)
 
     # 관계 정의
