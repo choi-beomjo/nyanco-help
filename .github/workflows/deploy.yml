@@ -4,6 +4,9 @@ on:
   push:
     branches: [ develop ]
 
+env: 
+  DATABASE_URL: '${{ secrets.DATABASE_URL }}'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -63,3 +66,13 @@ jobs:
       run: |
         cd app
         alembic upgrade head
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy nyanco \
+        --image=asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_REPO_NAME }}/nyanco \
+        --region=asia-northeast3 \
+        --platform=managed \
+        --allow-unauthenticated \
+        --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }}
+
