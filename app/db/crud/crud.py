@@ -2,23 +2,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from sqlalchemy.orm import joinedload, subqueryload
 from fastapi import Depends
-from sqlalchemy.engine.url import URL
+import os
 
-DATABASE_CONFIG = {
-    "drivername": "mysql+pymysql",
-    "username": "admin",
-    "password": "root1234",
-    "database": "nyanco-db",
-    "query": {
-        "unix_socket": "/cloudsql/shaped-timing-462302-m6:asia-northeast3:admin"
-    }
-}
-
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./myapi.db")
 
 
 engine = create_engine(
-    URL.create(**DATABASE_CONFIG),
-    pool_recycle=500, pool_size=5, max_overflow=20, echo=True, echo_pool=True 
+    DATABASE_URL,
+    pool_recycle=500, pool_size=5, max_overflow=20, echo=False, echo_pool=True 
 )
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))

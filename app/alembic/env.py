@@ -27,7 +27,7 @@ config = context.config
 
 import os
 # 🔥 핵심: 환경변수 강제 적용
-db_url = os.getenv("DB_URL")
+db_url = os.getenv("DB_URL", "sqlite:///./myapi.db")
 print(f"🔥 DB_URL = {db_url}")  # 확인용
 if db_url:
     config.set_main_option("sqlalchemy.url", db_url)
