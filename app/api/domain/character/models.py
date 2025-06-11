@@ -1,5 +1,5 @@
 from model.base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, Float
 from sqlalchemy.orm import relationship
 
 # 중간 테이블 정의
@@ -29,10 +29,10 @@ class Character(Base):
     cost = Column(Integer, nullable=False)
     kb = Column(Integer, nullable=False)
     target = Column(String(50), nullable=False)
-    tba = Column(Integer, nullable=False)
-    atk_sec = Column(Integer, nullable=False)
+    tba = Column(Float, nullable=False)
+    atk_sec = Column(Float, nullable=False)
     speed = Column(Integer, nullable=False)
-    spawn = Column(Integer, nullable=False)
+    spawn = Column(Float, nullable=False)
 
     # 관계 정의
     skills = relationship("Skill", secondary=character_skills, back_populates="characters")

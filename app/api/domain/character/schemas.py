@@ -16,10 +16,10 @@ class CharacterInfo(BaseModel):
     cost:   int
     kb:     int
     target: str
-    tba:    int
-    atk_sec:    int
+    tba:    float
+    atk_sec:    float
     speed:    int
-    spawn:    int
+    spawn:    float
     skills: Optional[List[SkillInfo]] = []
     properties: Optional[List[PropertyInfo]] = []
 
@@ -39,10 +39,10 @@ class CharacterData(BaseModel):
     cost:   int
     kb:     int
     target: str
-    tba:    int
-    atk_sec:    int
+    tba:    float
+    atk_sec:    float
     speed:    int
-    spawn:    int
+    spawn:    float
     skills: Optional[List[int]] = []
     properties: Optional[List[int]] = []
 
