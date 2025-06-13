@@ -9,5 +9,6 @@ class Skill(Base):
     __tablename__ = 'skills'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), unique=True, nullable=False)
+    category = Column(String(100))
     enemies = relationship("Enemy", secondary=enemy_skills, back_populates="skills")
     characters = relationship("Character", secondary=character_skills, back_populates="skills")

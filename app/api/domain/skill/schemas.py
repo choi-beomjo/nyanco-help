@@ -5,6 +5,7 @@ from typing import List, Optional
 class SkillInfo(BaseModel):
     id: int
     name: str
+    category: str
 
     class Config:
         orm_mode = True
@@ -13,6 +14,7 @@ class SkillInfo(BaseModel):
 
 class SkillPost(BaseModel):
     name: str
+    category: str
 
     class Config:
         orm_mode = True

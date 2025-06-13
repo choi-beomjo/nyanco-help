@@ -6,8 +6,8 @@ from ..property.models import Property
 
 
 def add_character_to_db(character_data, crud: CRUD):
-    character_data['skills'] = [crud.read(Skill, skill_id) for skill_id in character_data['skills']]
-    character_data['properties'] = [crud.read(Property, property_id) for property_id in character_data['properties']]
+    character_data['skills'] = [crud.read(Skill, filters={"id": skill_id}, single=True) for skill_id in character_data['skills']]
+    character_data['properties'] = [crud.read(Property, filters={"id": property_id}, single=True) for property_id in character_data['properties']]
     crud.create(Character(**character_data))
 
 
