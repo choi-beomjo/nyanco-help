@@ -28,8 +28,48 @@ def mock_character_data():
         "atk_sec": 1.0,
         "speed": 1,
         "spawn": 1.0,
-        "skills": [1, 2],  # 스킬 ID 리스트
-        "properties": [1, 2]  # 속성 ID 리스트
+        "skills": [Skill(id=1, name="Strong")],  # 스킬 ID 리스트
+        "properties": [Property(id=1, name="Red")]  # 속성 ID 리스트
+    }
+
+@pytest.fixture
+def mock_character_data2():
+    return {
+        "name": "Test Character",
+        "atk": 100,
+        "hp": 1000,
+        "range": 1,
+        "grade": "Rare",
+        "dps": 100,
+        "cost": 100,
+        "kb": 1,
+        "target": "Single",
+        "tba": 1.0,
+        "atk_sec": 1.0,
+        "speed": 1,
+        "spawn": 1.0,
+        "skills": [dict(id=1, name="Strong")],  # 스킬 ID 리스트
+        "properties": [dict(id=1, name="Red")]  # 속성 ID 리스트
+    }
+
+@pytest.fixture
+def mock_character_data3():
+    return {
+        "name": "Test Character",
+        "atk": 100,
+        "hp": 1000,
+        "range": 1,
+        "grade": "Rare",
+        "dps": 100,
+        "cost": 100,
+        "kb": 1,
+        "target": "Single",
+        "tba": 1.0,
+        "atk_sec": 1.0,
+        "speed": 1,
+        "spawn": 1.0,
+        "skills": [1],  # 스킬 ID 리스트
+        "properties": [1]  # 속성 ID 리스트
     }
 
 @pytest.fixture
@@ -41,17 +81,17 @@ def mock_property():
     return Property(id=1, name="Test Property")
 
 class TestCharacterUtils:
-    def test_add_character_to_db(self, crud, mock_character_data, mock_skill, mock_property):
+    def test_add_character_to_db(self, crud, mock_character_data3):
         # 스킬과 속성 모의 객체 설정
-        crud.read = lambda model, filters, single=False: mock_skill if model == Skill else mock_property
+        #crud.read = lambda model, filters, single=False: mock_skill if model == Skill else mock_property
         
         # 캐릭터 추가
-        add_character_to_db(mock_character_data, crud)
+        add_character_to_db(mock_character_data3, crud)
         
         # 캐릭터가 제대로 추가되었는지 확인
         characters = crud.read_all(Character)
         assert len(characters) > 0
-        assert characters[0].name == mock_character_data["name"]
+        assert characters[-1].name == mock_character_data3["name"]
 
     def test_get_characters_from_db(self, crud, mock_character_data):
         # 테스트 데이터 설정
@@ -98,12 +138,12 @@ class TestCharacterUtils:
         assert updated_character is not None
         assert updated_character.name == mock_character_data["name"]
 
-    def test_update_character_from_db_not_found(self, crud, mock_character_data):
+    def test_update_character_from_db_not_found(self, crud, mock_character_data2):
         # 캐릭터 업데이트 실패 케이스
         crud.update = lambda model, id, **kwargs: None
         
         with pytest.raises(HTTPException) as exc_info:
-            update_character_from_db(999, mock_character_data, crud)
+            update_character_from_db(999, mock_character_data2, crud)
         assert exc_info.value.status_code == 404
 
     def test_delete_character_from_db_success(self, crud, mock_character_data):
