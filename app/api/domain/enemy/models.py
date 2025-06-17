@@ -1,6 +1,8 @@
 from model.base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
+from api.domain.stage.models import StageEnemy  # 정확한 경로로 import
+
 
 # 중간 테이블 정의
 enemy_skills = Table(
@@ -36,4 +38,5 @@ class Enemy(Base):
     skills = relationship("Skill", secondary=enemy_skills, back_populates="enemies")
     properties = relationship("Property", secondary=enemy_properties, back_populates="enemies")
 
-    stages = relationship("StageEnemy", back_populates="enemy")
+
+    stages = relationship(StageEnemy, back_populates="enemy")  # ✅ 직접 참조
