@@ -1,8 +1,9 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from sqlalchemy.orm import joinedload, subqueryload
 from fastapi import Depends
 import os
+from typing import Any, Generator, List, Optional, Type, Dict
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./myapi.db")
 
@@ -19,11 +20,60 @@ class CRUD:
     def __init__(self, session: Session):
         self.session = session
 
-    def create(self, obj):
-        self.session.add(obj)
-        self.session.commit()
-        self.session.refresh(obj)
-        return obj
+    def create(self, obj: Any) -> Any:
+        """
+        Create a new object and return it.
+        """
+        try:
+            self.session.add(obj)
+            self.session.commit()
+            self.session.refresh(obj)
+            return obj
+        except Exception as e:
+            self.session.rollback()
+            raise e
+    
+
+    def get(self, 
+            model: Type[Any], 
+            obj_id: Any = None,
+            filters: Optional[Dict[str, Any]] = None,
+            options: Optional[List[Any]] = None,
+        ) -> Optional[Any]:
+        """
+        Fetch a single object. Either by primary key (obj_id) or by filter dict.
+        Use `options` to eager-load relationships, e.g., [joinedload(Model.relation)].
+        """
+        stmt = select(model)
+        if obj_id:
+            stmt = stmt.filter_by(id=obj_id)
+        elif filters:
+            stmt = stmt.filter_by(**filters)
+
+        if options:
+            stmt = stmt.options(*options)
+
+        return self.session.execute(stmt).scalars().first()
+    
+    def list(
+        self,
+        model: Type[Any],
+        filters: Optional[dict] = None,
+        skip: int = 0,
+        limit: int = 100,
+        options: Optional[List[Any]] = None,
+    ) -> List[Any]:
+        """
+        Fetch multiple objects with optional filter, pagination and relationship loading.
+        """
+        stmt = select(model)
+        if filters:
+            stmt = stmt.filter_by(**filters)
+        if options:
+            for opt in options:
+                stmt = stmt.options(opt)
+        stmt = stmt.offset(skip).limit(limit)
+        return self.session.execute(stmt).scalars().all()
 
     def read(self, model, filters=None,  # 필터 조건
         relationships=None,  # 로드할 관계 목록
@@ -98,6 +148,9 @@ class CRUD:
         return query.first() if single else query.all()
 
     def update(self, model, obj_id, **kwargs):
+        """
+        Update an object by primary key with values from update_data dict.
+        """
         obj = self.session.query(model).filter(model.id == obj_id).first()
         if not obj:
             return None
@@ -108,6 +161,9 @@ class CRUD:
         return obj
 
     def delete(self, model, obj_id):
+        """
+        Delete an object by primary key and return it. Returns None if not found.
+        """
         obj = self.session.query(model).filter(model.id == obj_id).first()
         if obj:
             self.session.delete(obj)
