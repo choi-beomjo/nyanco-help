@@ -1,5 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
-from db.crud.crud import engine
+#from db.crud.crud import engine
+from sqlalchemy import MetaData
 
 
 Base = declarative_base()
@@ -11,3 +12,9 @@ naming_convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
     "pk": "pk_%(table_name)s"
 }
+
+# MetaData에 naming convention 적용
+metadata = MetaData(naming_convention=naming_convention)
+
+# declarative_base에 metadata 전달
+Base = declarative_base(metadata=metadata)
