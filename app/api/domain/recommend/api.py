@@ -14,8 +14,8 @@ router = APIRouter(tags=[Tags.recommend])
 @router.get('/{enemy_id}')
 async def get_characters_by_property(enemy_id: int, crud: CRUD=Depends(get_crud)):
     enemy = get_enemy_from_db(enemy_id=enemy_id, crud=crud)
-    
-    characters = get_recommend_characters_by_property(enemy_info=enemy, crud=crud)
+
+    characters = get_recommend_characters_by_property(enemy=enemy, crud=crud)
     characters_by_range = get_recommend_characters_by_range(enemy, crud)
     characters_by_skill = get_recommend_characters_by_skills(enemy, crud)
     return { 

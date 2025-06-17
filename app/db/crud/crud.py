@@ -38,6 +38,7 @@ class CRUD:
             model: Type[Any], 
             obj_id: Any = None,
             filters: Optional[Dict[str, Any]] = None,
+            where: Optional[List[Any]] = None,
             options: Optional[List[Any]] = None,
         ) -> Optional[Any]:
         """
@@ -50,6 +51,10 @@ class CRUD:
         elif filters:
             stmt = stmt.filter_by(**filters)
 
+        if where:
+            for w in where:
+                stmt = stmt.where(w)
+
         if options:
             stmt = stmt.options(*options)
 
@@ -59,6 +64,7 @@ class CRUD:
         self,
         model: Type[Any],
         filters: Optional[dict] = None,
+        where: Optional[List[Any]] = None,
         skip: int = 0,
         limit: int = 100,
         options: Optional[List[Any]] = None,
@@ -69,11 +75,17 @@ class CRUD:
         stmt = select(model)
         if filters:
             stmt = stmt.filter_by(**filters)
+        if where:
+            for w in where:
+                stmt = stmt.where(w)
         if options:
             for opt in options:
                 stmt = stmt.options(opt)
         stmt = stmt.offset(skip).limit(limit)
-        return self.session.execute(stmt).scalars().all()
+        result = self.session.execute(stmt)
+        # unique() to remove duplicates from joined eager loads on collections
+        return result.unique().scalars().all()
+
 
     def read(self, model, filters=None,  # 필터 조건
         relationships=None,  # 로드할 관계 목록
