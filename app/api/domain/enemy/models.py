@@ -23,16 +23,27 @@ class Enemy(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
-    atk = Column(Integer, nullable=False)
+    atk1 = Column(Integer, nullable=False)
+    atk2 = Column(Integer, nullable=False)
+    atk3 = Column(Integer, nullable=False)
     hp = Column(Integer, nullable=False)
     range = Column(Integer, nullable=False)
     kb = Column(Integer, nullable=False)
-    dps = Column(Integer, nullable=False)
     money = Column(Integer, nullable=False)
     speed = Column(Integer, nullable=False)
-    tba = Column(Integer, nullable=False)
-    target = Column(String(50), nullable=False) 
-    atk_sec = Column(Integer, nullable=False) 
+    tba = Column(Integer, nullable=False) 
+    pre_atk1 = Column(Integer, nullable=False)
+    pre_atk2 = Column(Integer, nullable=False)
+    pre_atk3 = Column(Integer, nullable=False)
+    back_atk = Column(Integer, nullable=False)
+    atk_type = Column(Integer, nullable=False)
+    trait = Column(Integer, nullable=False)
+    long_distance1 = Column(Integer, nullable=False)
+    long_distance2 = Column(Integer, nullable=False)
+    immunity = Column(Integer, nullable=False)
+    atk_freq = Column(Integer, nullable=False)
+    ability_enabled = Column(Integer, nullable=False)
+
 
     # 관계 정의
     skills = relationship("Skill", secondary=enemy_skills, back_populates="enemies")
@@ -40,3 +51,4 @@ class Enemy(Base):
 
 
     stages = relationship(StageEnemy, back_populates="enemy")  # ✅ 직접 참조
+    skill_effects_enemy = relationship("SkillEffectEnemy", back_populates="enemies")

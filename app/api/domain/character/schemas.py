@@ -8,18 +8,30 @@ from ..property.schemas import PropertyInfo
 class CharacterInfo(BaseModel):
     id:     int
     name:   str
-    atk:    int
+    atk1:   int
+    atk2:   int
+    atk3:   int
     hp:     int
     range:  int
-    grade:  str
-    dps:    int
     cost:   int
     kb:     int
-    target: str
-    tba:    float
-    atk_sec:    float
+    tba:    int
     speed:    int
-    spawn:    float
+    spawn:    int
+    base_id:  int
+    form:     int
+    pre_atk1: int
+    pre_atk2: int
+    pre_atk3: int
+    back_atk: int
+    atk_type: int
+    trait:    int
+    long_distance1: int
+    long_distance2: int
+    immunity:   int
+    atk_freq:   int
+    ability_enabled: int
+
     skills: Optional[List[SkillInfo]] = []
     properties: Optional[List[PropertyInfo]] = []
 
@@ -31,18 +43,29 @@ class CharacterInfo(BaseModel):
 
 class CharacterData(BaseModel):
     name:   str
-    atk:    int
+    atk1:   int
+    atk2:   int
+    atk3:   int
     hp:     int
     range:  int
-    grade:  str
-    dps:    int
     cost:   int
     kb:     int
-    target: str
-    tba:    float
-    atk_sec:    float
+    tba:    int
     speed:    int
-    spawn:    float
+    spawn:    int
+    base_id:  int
+    form:     int
+    pre_atk1: int
+    pre_atk2: int
+    pre_atk3: int
+    back_atk: int
+    atk_type: int
+    trait:    int
+    long_distance1: int
+    long_distance2: int
+    immunity:   int
+    atk_freq:   int
+    ability_enabled: int
     skills: Optional[List[int]] = []
     properties: Optional[List[int]] = []
 
