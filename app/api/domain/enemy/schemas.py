@@ -29,6 +29,9 @@ class EnemyInfo(BaseModel):
     ability_enabled: int
     immunity:   int
 
+    skills: Optional[List[SkillInfo]] = []
+    properties: Optional[List[PropertyInfo]] = []
+
     class Config:
         orm_mode = True
         from_attributes=True
