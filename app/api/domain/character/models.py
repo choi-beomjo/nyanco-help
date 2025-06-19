@@ -50,3 +50,4 @@ class Character(Base):
     skills = relationship("Skill", secondary=character_skills, back_populates="characters")
     properties = relationship("Property", secondary=character_properties, back_populates="characters")
 
+    skill_effects = relationship("SkillEffect", back_populates="characters")

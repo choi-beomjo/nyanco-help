@@ -8,18 +8,26 @@ from ..property.schemas import PropertyInfo
 class EnemyInfo(BaseModel):
     id:     int
     name:   str
-    atk:    int
+    atk1:   int
+    atk2:   int
+    atk3:   int
     hp:     int
     range:  int
     kb:     int
-    dps:    int
     money:  int
     speed:  int
     tba:    int
-    target: str
-    atk_sec:    int
-    skills: Optional[List[SkillInfo]] = []
-    properties: Optional[List[PropertyInfo]] = []
+    pre_atk1: int
+    pre_atk2: int
+    pre_atk3: int
+    back_atk: int
+    atk_type: int
+    trait:    int
+    long_distance1: int
+    long_distance2: int
+    atk_freq:   int
+    ability_enabled: int
+    immunity:   int
 
     class Config:
         orm_mode = True
@@ -28,16 +36,27 @@ class EnemyInfo(BaseModel):
 
 class EnemyData(BaseModel):
     name:   str
-    atk:    int
+    atk1:   int
+    atk2:   int
+    atk3:   int
     hp:     int
     range:  int
     kb:     int
-    dps:    int
     money:  int
     speed:  int
     tba:    int
-    target: str
-    atk_sec:    int
+    pre_atk1: int
+    pre_atk2: int
+    pre_atk3: int
+    back_atk: int
+    atk_type: int
+    trait:    int
+    long_distance1: int
+    long_distance2: int
+    atk_freq:   int
+    ability_enabled: int
+    immunity:   int
+
     skills: Optional[List[int]] = []
     properties: Optional[List[int]] = []
 
