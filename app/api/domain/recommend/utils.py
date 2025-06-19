@@ -1,14 +1,24 @@
 from ..character.utils import get_characters_from_db
 from ..character.models import Character
+from ..property.models import Property
 from ..skill.models import Skill
+from ..enemy.models import Enemy
+from sqlalchemy.orm import joinedload
 
+def get_recommend_characters_by_property(enemy: Enemy, crud):
 
-def get_recommend_characters_by_property(enemy_info: dict, crud):
-
-    property_ids = [prop.id for prop in enemy_info.properties]
-
-    characters = get_characters_from_db(crud=crud, properties=property_ids)
-    return characters
+    prop_objs = [
+        prop.id
+        for prop in enemy.properties
+    ]
+    # eager load 관계
+    options = [joinedload(Character.properties)]
+    return crud.list(
+        Character,
+        filters=None,
+        where=[Character.properties.any(Property.id == prop_id) for prop_id in prop_objs],
+        options=options,
+    )
 
 
 def get_recommend_characters_by_range(enemy, crud):
@@ -20,26 +30,27 @@ def get_recommend_characters_by_range(enemy, crud):
 
 
 def get_recommend_characters_by_skills(enemy, crud):
-    # 스킬 기반 필터 
-    skill_filters = [
-        crud.read(Skill, condition)
-        for skill in enemy.skills
-        for condition in (get_skill_against(skill.name) or [])
-    ]
-    
-    # 속성 기반 필터 추가
-    property_filters = [
-        crud.read(Skill, condition)
-        for property in enemy.properties
-        for condition in (get_skill_related_properties(property.name) or [])
-    ]
+    # 1) 속성·스킬 기반 필터 조건 생성
+    skill_queries = []
+    for sk in enemy.skills:
+        for cond in get_skill_against(sk.name) or []:
+            skill_queries.append(cond)
+    for prop in enemy.properties:
+        for cond in get_skill_related_properties(prop.name) or []:
+            skill_queries.append(cond)
 
-    # 모든 필터 합치기
-    filters = {"skills": skill_filters + property_filters}
-
-    # 캐릭터 검색
-    characters = crud.read_all(Character, **filters)
-    return characters
+    # 2) Skill 객체 리스트로 치환
+    skill_objs = [
+        crud.get(Skill, filters=cond) 
+        for cond in skill_queries
+    ]
+    options = [joinedload(Character.skills)]
+    return crud.list(
+        Character,
+        filters=None,
+        where=[Character.skills.any(Skill.id == skill_id) for skill_id in skill_objs],
+        options=options,
+    )
 
 
 def get_skill_against(skill_name):
