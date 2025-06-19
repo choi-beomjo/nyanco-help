@@ -15,10 +15,11 @@ class Skill(Base):
     effects = relationship("SkillEffect", back_populates="skills")
     enemies = relationship("Enemy", secondary=enemy_skills, back_populates="skills")
     characters = relationship("Character", secondary=character_skills, back_populates="skills")
+    effects_enemy = relationship("SkillEffectEnemy", back_populates="skills")
 
 
 class SkillEffect(Base):
-    __tablename__ = 'skill_effects'
+    __tablename__ = 'skill_effects_cha'
     id = Column(Integer, primary_key=True, autoincrement=True)
     character_id = Column(Integer, ForeignKey('characters.id'), nullable=False)
     skill_id = Column(Integer, ForeignKey('skills.id'), nullable=False)
@@ -26,4 +27,16 @@ class SkillEffect(Base):
     effect_value = Column(Integer, nullable=False)
 
     skills = relationship("Skill", back_populates="effects")
-    characters = relationship("Character", back_populates="skill_effects")
+    characters = relationship("Character", back_populates="skill_effects_cha")
+
+
+class SkillEffectEnemy(Base):
+    __tablename__ = 'skill_effects_enemy'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    enemy_id = Column(Integer, ForeignKey('enemies.id'), nullable=False)
+    skill_id = Column(Integer, ForeignKey('skills.id'), nullable=False)
+    effect_type = Column(String(100), nullable=False)
+    effect_value = Column(Integer, nullable=False)
+
+    skills = relationship("Skill", back_populates="effects_enemy")
+    enemies = relationship("Enemy", back_populates="skill_effects_enemy")
