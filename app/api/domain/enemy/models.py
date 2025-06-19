@@ -51,3 +51,4 @@ class Enemy(Base):
 
 
     stages = relationship(StageEnemy, back_populates="enemy")  # ✅ 직접 참조
+    skill_effects_enemy = relationship("SkillEffectEnemy", back_populates="enemies")
