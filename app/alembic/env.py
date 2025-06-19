@@ -90,16 +90,22 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        # 🔥 외래키 제약 조건 무시 (핵심)
-        connection.execute(text("SET FOREIGN_KEY_CHECKS=0"))
+        # ✅ DB 종류가 mysql/mariadb인 경우에만 외래키 체크 해제
+        if connection.dialect.name in ("mysql", "mariadb"):
+            connection.execute(text("SET FOREIGN_KEY_CHECKS=0"))
 
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            render_as_batch=(connection.dialect.name == "sqlite")  # 🔥 핵심!
         )
 
         with context.begin_transaction():
             context.run_migrations()
 
+        # ✅ 마찬가지로 다시 외래키 체크 활성화 (MySQL/MariaDB일 때만)
+        if connection.dialect.name in ("mysql", "mariadb"):
+            connection.execute(text("SET FOREIGN_KEY_CHECKS=1"))
 
 if context.is_offline_mode():
     run_migrations_offline()
