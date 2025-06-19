@@ -9,6 +9,20 @@ class Skill(Base):
     __tablename__ = 'skills'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), unique=True, nullable=False)
-    category = Column(String(100))
+    identify = Column(String(100), nullable=False)
+    parse_fields = Column(String(500), nullable=False)
+
+    effects = relationship("SkillEffect", back_populates="skills")
     enemies = relationship("Enemy", secondary=enemy_skills, back_populates="skills")
     characters = relationship("Character", secondary=character_skills, back_populates="skills")
+
+
+class SkillEffect(Base):
+    __tablename__ = 'skill_effects'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    character = Column(Integer, nullable=False)
+    skill_id = Column(Integer, ForeignKey('skills.id'), nullable=False)
+    effect_type = Column(String(100), nullable=False)
+    effect_value = Column(Integer, nullable=False)
+
+    skills = relationship("Skill", back_populates="effects")
