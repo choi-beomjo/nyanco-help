@@ -185,4 +185,8 @@ class CRUD:
             self.session.delete(obj)
             self.session.commit()
         return obj
+    
+
+    def count(self, model):
+        return self.session.query(model).count()
 
