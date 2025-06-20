@@ -12,7 +12,7 @@ def add_enemy_to_db(enemy_data, crud: CRUD):
 
 
 
-def get_enemies_from_db(crud: CRUD, enemy_info={}, skills=None, properties=None):
+def get_enemies_from_db(crud: CRUD, enemy_info={}, skills=None, properties=None, skip=0, limit=None):
     filters = {key: value for key, value in enemy_info if value}
 
     skill_objs = [crud.get(Skill, obj_id=sid) for sid in skills] if skills else []
@@ -29,7 +29,7 @@ def get_enemies_from_db(crud: CRUD, enemy_info={}, skills=None, properties=None)
     if prop_objs:
         options.append(joinedload(Enemy.properties))
 
-    enemies = crud.list(Enemy, filters=filters, options=options)
+    enemies = crud.list(Enemy, filters=filters, options=options, skip=skip, limit=limit)
     return enemies
 
 

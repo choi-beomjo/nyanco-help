@@ -66,7 +66,7 @@ class CRUD:
         filters: Optional[dict] = None,
         where: Optional[List[Any]] = None,
         skip: int = 0,
-        limit: int = 100,
+        limit: Optional[int] = 100,
         options: Optional[List[Any]] = None,
     ) -> List[Any]:
         """
@@ -81,7 +81,11 @@ class CRUD:
         if options:
             for opt in options:
                 stmt = stmt.options(opt)
-        stmt = stmt.offset(skip).limit(limit)
+        
+        stmt = stmt.offset(skip)
+        if limit is not None:
+            stmt = stmt.limit(limit)
+        
         result = self.session.execute(stmt)
         # unique() to remove duplicates from joined eager loads on collections
         return result.unique().scalars().all()
@@ -181,4 +185,8 @@ class CRUD:
             self.session.delete(obj)
             self.session.commit()
         return obj
+    
+
+    def count(self, model):
+        return self.session.query(model).count()
 

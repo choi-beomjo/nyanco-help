@@ -11,10 +11,20 @@ from ..skill.schemas import SkillInfo
 router = APIRouter(tags=[Tags.enemy])
 
 
-@router.get("/list")
-def get_enemy_list(crud: CRUD = Depends(get_crud)):
-    enemies = get_enemies_from_db(crud=crud)
-    return [EnemyInfo.from_orm(enemy) for enemy in enemies]
+@router.get("/list", response_model=EnemyList)
+def get_enemy_list(
+    page: int = 1,
+    page_size: int = 10,
+    crud: CRUD = Depends(get_crud)):
+    
+    enemies = get_enemies_from_db(crud=crud, skip=(page-1)*page_size, limit=page_size)
+    total = crud.count(Enemy)
+    return EnemyList(
+        data=[EnemyInfo.from_orm(enemy) for enemy in enemies],
+        total=total,
+        page=page,
+        page_size=page_size
+    )
 
 
 @router.post("")

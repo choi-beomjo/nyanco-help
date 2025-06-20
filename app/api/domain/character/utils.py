@@ -13,7 +13,7 @@ def add_character_to_db(character_data, crud: CRUD):
 
 
 
-def get_characters_from_db(crud: CRUD, character_info={}, skills=None, properties=None):
+def get_characters_from_db(crud: CRUD, character_info={}, skills=None, properties=None, skip=0, limit=None):
     # 1) 기본 필터 생성
     filters = {
         key: value
@@ -37,11 +37,13 @@ def get_characters_from_db(crud: CRUD, character_info={}, skills=None, propertie
     if prop_objs:
         options.append(joinedload(Character.properties))
 
-    # 4) 리스트 조회
+    # 4) 리스트 조회 (skip과 limit 파라미터 추가)
     return crud.list(
         Character,
         filters=filters,
         options=options,
+        skip=skip,
+        limit=limit,
     )
 
 
