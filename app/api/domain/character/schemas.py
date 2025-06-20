@@ -77,3 +77,16 @@ class CharacterData(BaseModel):
 class SearchInfo(BaseModel):
     skills: List[int] = []
     properties: List[int] = []
+
+
+class CharacterList(BaseModel):
+    data: List[CharacterInfo]
+    total: int
+    page: int
+    page_size: int
+
+    class Config:
+        orm_mode = True
+        from_attributes=True
+
+

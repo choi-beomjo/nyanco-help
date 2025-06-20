@@ -72,3 +72,14 @@ class EnemyData(BaseModel):
 class SearchInfo(BaseModel):
     skills: List[int] = []
     properties: List[int] = []
+
+
+class EnemyList(BaseModel):
+    data: List[EnemyInfo]
+    total: int
+    page: int
+    page_size: int
+
+    class Config:
+        orm_mode = True
+        from_attributes=True
