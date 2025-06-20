@@ -12,8 +12,12 @@ router = APIRouter(tags=[Tags.enemy])
 
 
 @router.get("/list")
-def get_enemy_list(crud: CRUD = Depends(get_crud)):
-    enemies = get_enemies_from_db(crud=crud)
+def get_enemy_list(
+    page: int = 1,
+    page_size: int = 10,
+    crud: CRUD = Depends(get_crud)):
+    
+    enemies = get_enemies_from_db(crud=crud, skip=(page-1)*page_size, limit=page_size)
     return [EnemyInfo.from_orm(enemy) for enemy in enemies]
 
 
