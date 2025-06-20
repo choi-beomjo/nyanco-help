@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from typing import Optional
 from ...tags import Tags
 from utils.msg.msg import Msg
 from .utils import *
@@ -12,8 +13,12 @@ router = APIRouter(tags=[Tags.character])
 
 
 @router.get("/list")
-def get_character_list(crud: CRUD = Depends(get_crud)):
-    characters = get_characters_from_db(crud=crud)
+def get_character_list(
+    page: int = 1,
+    page_size: int = 10,
+    crud: CRUD = Depends(get_crud)):
+    
+    characters = get_characters_from_db(crud=crud, skip=(page-1)*page_size, limit=page_size)
     return [CharacterInfo.from_orm(character) for character in characters]
 
 
