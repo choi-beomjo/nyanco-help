@@ -8,3 +8,4 @@ class Tags(Enum):
     property="Property"
     character="Character"
     recommend="Recommend"
+    stage="Stage"

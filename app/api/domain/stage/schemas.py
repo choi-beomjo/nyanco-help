@@ -30,4 +30,13 @@ class StageInfo(BaseModel):
         orm_mode = True
         from_attributes=True
 
-    
+
+class StageList(BaseModel):
+    data: List[StageInfo]
+    total: int
+    page: int
+    page_size: int
+
+    class Config:
+        orm_mode = True
+        from_attributes=True
