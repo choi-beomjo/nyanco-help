@@ -16,10 +16,11 @@ router = APIRouter(tags=[Tags.character])
 def get_character_list(
     page: int = 1,
     page_size: int = 10,
-    crud: CRUD = Depends(get_crud)):
-    
-    characters = get_characters_from_db(crud=crud, skip=(page-1)*page_size, limit=page_size)
-    total = crud.count(Character)
+    crud: CRUD = Depends(get_crud)
+):
+
+    characters = get_characters_from_db(crud=crud, skip=(page - 1) * page_size, limit=page_size)
+    total = count_characters_from_db(crud=crud)
     return CharacterList(
         data=[CharacterInfo.from_orm(character) for character in characters],
         total=total,
@@ -60,9 +61,33 @@ def delete_character(character_id: int, crud: CRUD = Depends(get_crud), current_
 
 
 @router.post("/search")
-def search_characters(search_info: SearchInfo, crud: CRUD = Depends(get_crud)):
+def search_characters(search_info: SearchInfo, 
+                      page: int = 1,
+                      page_size: int = 10,
+                      crud: CRUD = Depends(get_crud)):
+    
     search_ = search_info.dict()
-    characters = get_characters_from_db(crud=crud, skills=search_['skills'], properties=search_['properties'])
-    if characters is None:
-        raise HTTPException(status_code=404, detail="NO Enemies")
-    return [CharacterInfo.from_orm(character) for character in characters]
+    
+    # 조건에 맞는 총 개수 조회
+    total = count_characters_from_db(
+        crud=crud, 
+        skills=search_['skills'], 
+        properties=search_['properties']
+    )
+    
+    # 페이지네이션된 데이터 조회
+    skip = (page - 1) * page_size
+    characters = get_characters_from_db(
+        crud=crud, 
+        skills=search_['skills'], 
+        properties=search_['properties'], 
+        skip=skip, 
+        limit=page_size
+    )
+    
+    return CharacterList(
+        data=[CharacterInfo.from_orm(character) for character in characters],
+        total=total,
+        page=page,
+        page_size=page_size
+    )
