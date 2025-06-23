@@ -6,38 +6,48 @@ from .schemas import *
 from ..enemy.models import Enemy
 from .models import *
 from ...deps import get_current_user, get_crud, CRUD, admin_required
-
-
+from sqlalchemy.orm import joinedload
+from fastapi import HTTPException
 router = APIRouter()
 
-@router.get("")
-def get_stage_list(crud: CRUD = Depends(get_crud)):
-    stages = crud.join_read(Stage)
-    return [StageInfo.from_orm(stage) for stage in stages]
+@router.get("/list", response_model=StageList, tags=[Tags.stage])
+def get_stage_list(
+    page: int = 1,
+    page_size: int = 10,
+    crud: CRUD = Depends(get_crud)):
+
+    stages = crud.list(Stage, options=[joinedload(Stage.enemies)], skip=(page-1)*page_size, limit=page_size)
+    total = crud.count(Stage)
+   
+    return StageList(
+        data=[StageInfo.from_orm(stage) for stage in stages],
+        total=total,
+        page=page,
+        page_size=page_size
+    )
 
 
 
-@router.post("")
+@router.post("", tags=[Tags.stage])
 def post_stage(req: StageInfo, crud: CRUD = Depends(get_crud)):
     stage_info = req.dict()
 
     crud.create(Stage(**stage_info))
 
 
-@router.get("/{stage_id}")
-def get_stage_with_enemies(stage_id: int, crud: CRUD = Depends(get_crud)):
-    stage = crud.read(
-        model=Stage,
-        filters=dict(id=stage_id),
-        relationships=["enemies"]
-    )
-    stage = stage.__dict__
-    enemies = [crud.read(Enemy, filters=dict(id=enemy.__dict__["enemy_id"])) for enemy in stage["enemies"]]
-    return StageInfo(name=stage["name"], enemies=enemies)
+@router.get("/{stage_id}", response_model=StageInfo, tags=[Tags.stage])
+def get_stage_with_enemies(stage_id: str, crud: CRUD = Depends(get_crud)):
+    stage = crud.get(Stage, obj_id=stage_id, options=[joinedload(Stage.enemies)])
+
+    if not stage:
+        raise HTTPException(status_code=404, detail=f"Stage not found: {stage_id}")
+
+    return StageInfo.from_orm(stage)
 
 
 
-@router.post("/{stage_id}/enemy")
+
+@router.post("/{stage_id}/enemy", tags=[Tags.stage])
 def add_enemy_to_stage(stage_id: int, enemy_id: int, crud: CRUD = Depends(get_crud)):
     
     enemy = crud.read(Enemy, filters=dict(id=enemy_id), single=True)
@@ -59,12 +69,12 @@ def add_enemy_to_stage(stage_id: int, enemy_id: int, crud: CRUD = Depends(get_cr
 
 
 
-@router.post("/search")
+@router.post("/search", tags=[Tags.stage])
 def search_stages_from_enemies():
     pass
 
 
-@router.get("/{enemy_id}/stage")
+@router.get("/{enemy_id}/stage", tags=[Tags.stage])
 def search_stages_from_enemies(enemy_id: int, crud: CRUD=Depends(get_crud)):
     
     return crud.read(Enemy, filters=dict(id=enemy_id), relationships=["stages"])

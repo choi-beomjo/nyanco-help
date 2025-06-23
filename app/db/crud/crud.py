@@ -187,6 +187,15 @@ class CRUD:
         return obj
     
 
-    def count(self, model):
-        return self.session.query(model).count()
+    def count(self, model, filters=None, where=None):
+        """
+        조건에 맞는 객체 수를 반환
+        """
+        query = self.session.query(model)
+        if filters:
+            query = query.filter_by(**filters)
+        if where:
+            for condition in where:  # where는 리스트여야 함
+                query = query.filter(condition)
+        return query.count()
 
