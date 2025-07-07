@@ -15,6 +15,12 @@ character_properties = Table(
     Column('property_id', Integer, ForeignKey('properties.id'), primary_key=True)
 )
 
+character_immunities = Table(
+    'character_immunities', Base.metadata,
+    Column('character_id', Integer, ForeignKey('characters.id'), primary_key=True),
+    Column('immunity_id', Integer, ForeignKey('immunities.id'), primary_key=True)
+)
+
 # 메인 테이블 정의
 class Character(Base):
     __tablename__ = "characters"

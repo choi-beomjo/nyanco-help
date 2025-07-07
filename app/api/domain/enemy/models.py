@@ -17,6 +17,12 @@ enemy_properties = Table(
     Column('property_id', Integer, ForeignKey('properties.id'), primary_key=True)
 )
 
+enemy_immunities = Table(
+    'enemy_immunities', Base.metadata,
+    Column('enemy_id', Integer, ForeignKey('enemies.id'), primary_key=True),
+    Column('immunity_id', Integer, ForeignKey('immunities.id'), primary_key=True)
+)
+
 # 메인 테이블 정의
 class Enemy(Base):
     __tablename__ = "enemies"
