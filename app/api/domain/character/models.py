@@ -57,3 +57,4 @@ class Character(Base):
     properties = relationship("Property", secondary=character_properties, back_populates="characters")
 
     skill_effects_cha = relationship("SkillEffect", back_populates="characters")
+    immunities = relationship("Immunity", secondary=character_immunities, back_populates="characters")
