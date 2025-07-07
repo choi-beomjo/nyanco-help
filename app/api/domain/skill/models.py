@@ -1,8 +1,8 @@
 from model.base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
-from ..enemy.models import enemy_skills
-from ..character.models import character_skills
+from ..enemy.models import enemy_skills, enemy_immunities
+from ..character.models import character_skills, character_immunities
 
 
 class Skill(Base):
@@ -40,3 +40,12 @@ class SkillEffectEnemy(Base):
 
     skills = relationship("Skill", back_populates="effects_enemy")
     enemies = relationship("Enemy", back_populates="skill_effects_enemy")
+
+
+class Immunity(Base):
+    __tablename__ = 'immunities'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False)
+
+    characters = relationship("Character", secondary=character_immunities, back_populates="immunities")
+    enemies = relationship("Enemy", secondary=enemy_immunities, back_populates="immunities")
