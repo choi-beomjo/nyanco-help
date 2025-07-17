@@ -91,3 +91,17 @@ def search_characters(search_info: SearchInfo,
         page=page,
         page_size=page_size
     )
+
+
+@router.get("/search/name")
+def search_characters_by_name(name: str, page: int = 1, page_size: int = 10, crud: CRUD=Depends(get_crud)):
+    # 비슷한 이름도 검색되도록
+    
+    characters = get_characters_from_db(crud=crud, like_filters=dict(name=name), skip=(page-1)*page_size, limit=page_size)
+    total = crud.count(Character, like_filters=dict(name=name))
+    return CharacterList(
+        data=[CharacterInfo.from_orm(character) for character in characters],
+        total=total,
+        page=page,
+        page_size=page_size
+    )

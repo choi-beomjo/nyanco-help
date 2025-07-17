@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from sqlalchemy.orm import joinedload, subqueryload
+from sqlalchemy import or_
 from fastapi import Depends
 import os
 from typing import Any, Generator, List, Optional, Type, Dict
@@ -68,13 +69,24 @@ class CRUD:
         skip: int = 0,
         limit: Optional[int] = 100,
         options: Optional[List[Any]] = None,
+        like_filters: Optional[dict] = None,
     ) -> List[Any]:
         """
         Fetch multiple objects with optional filter, pagination and relationship loading.
+        like_filters: 부분 문자열 검색을 위한 필터 (예: {"name": "검색어"})
         """
         stmt = select(model)
+        
+        # 정확한 일치 필터
         if filters:
             stmt = stmt.filter_by(**filters)
+        
+        # 부분 문자열 검색 필터
+        if like_filters:
+            for key, value in like_filters.items():
+                column = getattr(model, key)
+                stmt = stmt.where(column.like(f"%{value}%"))
+        
         if where:
             for w in where:
                 stmt = stmt.where(w)
@@ -187,13 +199,18 @@ class CRUD:
         return obj
     
 
-    def count(self, model, filters=None, where=None):
+    def count(self, model, filters=None, where=None, like_filters=None):
         """
         조건에 맞는 객체 수를 반환
+        like_filters: 부분 문자열 검색을 위한 필터 (예: {"name": "검색어"})
         """
         query = self.session.query(model)
         if filters:
             query = query.filter_by(**filters)
+        if like_filters:
+            for key, value in like_filters.items():
+                column = getattr(model, key)
+                query = query.filter(column.like(f"%{value}%"))
         if where:
             for condition in where:  # where는 리스트여야 함
                 query = query.filter(condition)
