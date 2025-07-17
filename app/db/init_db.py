@@ -9,6 +9,7 @@ from api.domain.enemy.models import Enemy
 from api.domain.stage.models import Stage, StageEnemy
 from api.domain.user.models import User
 from api.domain.board.models import Post
+from api.domain.recommend.models import UserExperience
 
 def init_db():
     Base.metadata.create_all(bind=engine)

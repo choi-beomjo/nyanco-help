@@ -21,6 +21,27 @@ character_immunities = Table(
     Column('immunity_id', Integer, ForeignKey('immunities.id'), primary_key=True)
 )
 
+class Instinct(Base):
+    __tablename__ = 'instincts'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    instinct_type = Column(String(100), nullable=False)
+    target_id = Column(Integer, nullable=False)
+    name = Column(String(100))
+
+    character_instincts = relationship("CharacterInstinct", back_populates="instinct")
+
+
+class CharacterInstinct(Base):
+    __tablename__ = 'character_instincts'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    base_id = Column(Integer, nullable=False)
+    instinct_id = Column(Integer, ForeignKey('instincts.id'), nullable=False)
+
+    instinct = relationship("Instinct", back_populates="character_instincts")
+
+
 # 메인 테이블 정의
 class Character(Base):
     __tablename__ = "characters"
@@ -58,3 +79,6 @@ class Character(Base):
 
     skill_effects_cha = relationship("SkillEffect", back_populates="characters")
     immunities = relationship("Immunity", secondary=character_immunities, back_populates="characters")
+    
+    # instincts 관계 추가 (base_id로 매핑)
+    instincts = None  # 동적으로 설정될 예정

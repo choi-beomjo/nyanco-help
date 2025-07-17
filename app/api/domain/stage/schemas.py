@@ -18,6 +18,7 @@ class EnemyList(BaseModel):
 
 
 class StageInfo(BaseModel):
+    id: str
     name: str
     stage_hp: int
     length: int

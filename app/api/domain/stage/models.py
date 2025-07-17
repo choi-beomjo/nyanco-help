@@ -31,3 +31,4 @@ class Stage(Base):
     difficulty = Column(Float, nullable=False)
 
     enemies = relationship("StageEnemy", back_populates="stage")
+    user_experiences = relationship("UserExperience", back_populates="stage")

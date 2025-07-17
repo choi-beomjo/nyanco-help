@@ -69,9 +69,18 @@ def add_enemy_to_stage(stage_id: int, enemy_id: int, crud: CRUD = Depends(get_cr
 
 
 
-@router.post("/search", tags=[Tags.stage])
-def search_stages_from_enemies():
-    pass
+@router.get("/search/name", tags=[Tags.stage])
+def search_stages_from_enemies(name: str, page: int = 1, page_size: int = 10, crud: CRUD=Depends(get_crud)):
+    # stage name으로 검색
+    stages = crud.list(Stage, like_filters=dict(name=name), options=[joinedload(Stage.enemies)], skip=(page-1)*page_size, limit=page_size)
+    total = crud.count(Stage, like_filters=dict(name=name))
+    
+    return StageList(
+        data=[StageInfo.from_orm(stage) for stage in stages],
+        total=total,
+        page=page,
+        page_size=page_size
+    )
 
 
 @router.get("/{enemy_id}/stage", tags=[Tags.stage])
