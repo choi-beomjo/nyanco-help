@@ -52,11 +52,14 @@ async def create_user_experience(
     # UserExperience 객체 생성
     user_experience = UserExperience(
         stage_id=experience_data.stage_id,
-        characters_data=characters_data,
+        characters_data="",  # 빈 문자열로 초기화
         result=experience_data.result,
         clear_time=experience_data.clear_time,
         difficulty_rating=experience_data.difficulty_rating
     )
+    
+    # JSON 문자열로 변환하여 저장
+    user_experience.set_characters_data(characters_data)
     
     # 데이터베이스에 저장
     crud.create(user_experience)

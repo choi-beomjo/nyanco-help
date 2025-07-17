@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from .models import Character
+from .models import Character, CharacterInstinct
 from db.crud.crud import CRUD
 from ..skill.models import Skill
 from ..property.models import Property
@@ -13,7 +13,7 @@ def add_character_to_db(character_data, crud: CRUD):
     crud.create(Character(**character_data))
 
 
-def get_characters_from_db(crud: CRUD, character_info={}, skills=None, properties=None, skip=0, limit=None):
+def get_characters_from_db(crud: CRUD, character_info={}, like_filters={}, skills=None, properties=None, skip=0, limit=None):
     # 1) 기본 필터 생성
     filters = {
         key: value
@@ -32,14 +32,21 @@ def get_characters_from_db(crud: CRUD, character_info={}, skills=None, propertie
     where_conditions = get_where_conditions(skills, properties)
 
     # 4) 리스트 조회 (where 조건 사용)
-    return crud.list(
+    characters = crud.list(
         Character,
         filters=filters,
+        like_filters=like_filters or {},
         where=where_conditions,
         options=options,
         skip=skip,
         limit=limit,
     )
+    
+    # 5) 각 캐릭터에 instincts 로드
+    for character in characters:
+        character.instincts = get_instincts_from_db(crud, base_id=character.base_id)
+    
+    return characters
 
 
 def get_duplicate_character(character_info: dict, crud: CRUD):
@@ -50,6 +57,10 @@ def get_character_from_db(character_id: int, crud: CRUD):
     db_character = crud.get(Character, obj_id=character_id, options=[joinedload(Character.skills), joinedload(Character.properties)])
     if db_character is None:
         raise HTTPException(status_code=404, detail=f"Character not found: {character_id}")
+    
+    # instincts 로드 (base_id 기준으로)
+    db_character.instincts = get_instincts_from_db(crud, base_id=db_character.base_id)
+    
     return db_character
 
 
@@ -98,3 +109,12 @@ def get_where_conditions(skills, properties):
         prop_ids = [prop for prop in properties]
         where_conditions.append(Character.properties.any(Property.id.in_(prop_ids)))
     return where_conditions
+
+
+def get_instincts_from_db(crud: CRUD, base_id=None):
+    from sqlalchemy.orm import joinedload
+    return crud.list(
+        CharacterInstinct, 
+        filters={'base_id': base_id},
+        options=[joinedload(CharacterInstinct.instinct)]
+    )

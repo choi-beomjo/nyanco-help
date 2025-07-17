@@ -9,7 +9,7 @@ class UserExperience(Base):
     __tablename__ = "user_experiences"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    stage_id = Column(Integer, ForeignKey('stages.id'), nullable=False)
+    stage_id = Column(String(10), ForeignKey('stages.id'), nullable=False)
     characters_data = Column(Text, nullable=False)  # JSON 형태로 캐릭터 사용 데이터 저장
     result = Column(String(20), nullable=False)  # 'win', 'lose', 'draw' - 필수 필드
     timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)

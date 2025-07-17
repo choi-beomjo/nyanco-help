@@ -14,7 +14,7 @@ class CharacterUsageData(BaseModel):
 
 
 class UserExperienceData(BaseModel):
-    stage_id: int
+    stage_id: str
     characters: List[CharacterUsageData]
     result: str  # 'win', 'lose', 'draw' - 필수 필드로 변경
     timestamp: Optional[datetime] = None

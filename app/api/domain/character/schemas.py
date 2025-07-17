@@ -4,6 +4,26 @@ from ..skill.schemas import SkillInfo
 from ..property.schemas import PropertyInfo
 
 
+class InstinctInfo(BaseModel):
+    id: int
+    instinct_type: str
+    target_id: int
+    name: str
+
+    class Config:
+        from_attributes = True
+
+
+class CharacterInstinctInfo(BaseModel):
+    id: int
+    base_id: int
+    instinct_id: int
+    instinct: InstinctInfo
+
+    class Config:
+        from_attributes = True
+
+
 
 class CharacterInfo(BaseModel):
     id:     int
@@ -34,6 +54,7 @@ class CharacterInfo(BaseModel):
 
     skills: Optional[List[SkillInfo]] = []
     properties: Optional[List[PropertyInfo]] = []
+    instincts: Optional[List[CharacterInstinctInfo]] = []
 
     class Config:
         orm_mode = True
@@ -68,7 +89,8 @@ class CharacterData(BaseModel):
     ability_enabled: int
     skills: Optional[List[int]] = []
     properties: Optional[List[int]] = []
-
+    instincts: Optional[List[int]] = []
+    
     class Config:
         orm_mode = True
         from_attributes=True
