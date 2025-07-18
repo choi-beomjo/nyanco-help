@@ -197,4 +197,7 @@ pyrightconfig.json
 .github/workflows/deploy.yml_aws
 
 app/alembic/versions/*
-# End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
+
+models/
+
+# End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode    
