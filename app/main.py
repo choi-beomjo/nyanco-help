@@ -1,8 +1,13 @@
+import pickle
+
+import joblib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_globals import GlobalsMiddleware, g
 import uvicorn
-
+import torch
 from api.api import api
+from utils.infer.set_model import *
 
 
 app = FastAPI()
@@ -15,7 +20,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(GlobalsMiddleware)
+
 app.include_router(api, prefix="/api")
+
+@app.on_event('startup')
+def load_model():
+    model, embedidngs, node_mapping, scaler, char_stat_dict = load_model_files()
+    set_request_data()
+
 
 
 
