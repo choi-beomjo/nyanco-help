@@ -10,12 +10,8 @@ services:
     volumes:
       - ./app:/app  # 로컬 코드 변경 자동 반영
       - ./myapi.db:/myapi.db  # SQLite 데이터 파일 유지
+      - ./models:/models
     environment:
       - PYTHONPATH=/app
+    runtime: nvidia
     command: ["python3", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-    networks:
-      - jenkins_network  # 기존 jenkins 네트워크에 연결
-
-networks:
-  jenkins_network:
-    external: true  # 외부 네트워크를 사용
