@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Body, Response
+from fastapi import APIRouter, Depends, Body, Response, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 from jose import jwt, JWTError
@@ -90,6 +90,31 @@ def user_login(
     headers=response.headers)
 
 
+@router.post('/token/refresh')
+def refresh_token_endpoint(request: Request,
+                           redis: Redis = Depends(get_redis)):
 
+    try:
+        refresh_token = request.cookies.get("refresh_token")
+    except AttributeError:
+        raise HTTPException(status_code=401, detail="No refresh token provided")
+    
+    username = redis.get(f"refresh_token:{refresh_token}")
+
+    saved_token = redis.get(f"refresh_token:{username}")
+    if saved_token != refresh_token:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    # 새 access token 발급
+    new_access = jwt.encode({
+        "sub": username,
+        "exp": int(expire.timestamp())
+    }, SECRET_KEY, algorithm=ALGORITHM)
+
+    return {
+        "access_token": new_access,
+        "token_type": "bearer"
+    }
 
 
