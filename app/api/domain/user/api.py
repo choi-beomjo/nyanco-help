@@ -5,11 +5,14 @@ from starlette import status
 from datetime import datetime, timedelta
 from typing import List
 from ...tags import Tags
-from ...deps import get_current_user, get_crud, CRUD
+from ...deps import get_current_user, get_crud, CRUD, get_redis
 from .utils import *
 from .schemas import *
 from utils.msg.msg import Msg
 from core.security import *
+from redis import Redis
+import secrets
+
 
 router = APIRouter(tags=[Tags.user])
 
@@ -42,7 +45,8 @@ def delete_user(user_id: int, crud: CRUD = Depends(get_crud)):
 
 @router.post('/login')
 def user_login(form_data: OAuth2PasswordRequestForm = Depends(),
-               crud: CRUD = Depends(get_crud)):
+               crud: CRUD = Depends(get_crud),
+               redis: Redis = Depends(get_redis)):
     user = get_user_by_name(form_data.username, crud)
     
     if not user or not pwd_context.verify(form_data.password, user.password):
@@ -58,7 +62,15 @@ def user_login(form_data: OAuth2PasswordRequestForm = Depends(),
     }
     access_token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
+    refresh_token = secrets.token_urlsafe(32)
+
+    REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30
+
+    redis.set(f"refresh_token:{user.name}", refresh_token, ex=REFRESH_TOKEN_EXPIRE_MINUTES * 60)
+
     return {
         "access_token": access_token,
+        "refresh_token": refresh_token,
         "token_type": "bearer"
     }
+
