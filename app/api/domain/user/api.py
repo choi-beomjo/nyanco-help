@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body, Response
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.responses import JSONResponse
 from jose import jwt, JWTError
 from starlette import status
 from datetime import datetime, timedelta
@@ -44,7 +45,9 @@ def delete_user(user_id: int, crud: CRUD = Depends(get_crud)):
 
 
 @router.post('/login')
-def user_login(form_data: OAuth2PasswordRequestForm = Depends(),
+def user_login(
+            response: Response,
+            form_data: OAuth2PasswordRequestForm = Depends(),
                crud: CRUD = Depends(get_crud),
                redis: Redis = Depends(get_redis)):
     user = get_user_by_name(form_data.username, crud)
@@ -56,10 +59,12 @@ def user_login(form_data: OAuth2PasswordRequestForm = Depends(),
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     data = {
         "sub": user.name,
-        "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        "exp": int(expire.timestamp())
     }
+
     access_token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
     refresh_token = secrets.token_urlsafe(32)
@@ -67,10 +72,24 @@ def user_login(form_data: OAuth2PasswordRequestForm = Depends(),
     REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30
 
     redis.set(f"refresh_token:{user.name}", refresh_token, ex=REFRESH_TOKEN_EXPIRE_MINUTES * 60)
+    redis.set(f"refresh_token:{refresh_token}", user.name, ex=REFRESH_TOKEN_EXPIRE_MINUTES * 60)
 
-    return {
+    response.set_cookie(key="refresh_token", 
+                        value=refresh_token, 
+                        httponly=True, 
+                        secure=False, 
+                        samesite="lax",
+                        max_age=REFRESH_TOKEN_EXPIRE_MINUTES * 60,
+                        path="/api/user/token/refresh")
+    
+    return JSONResponse(status_code=200, content={
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer"
-    }
+    },
+    headers=response.headers)
+
+
+
+
 

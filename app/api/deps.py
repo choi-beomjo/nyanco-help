@@ -2,7 +2,7 @@
 
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
-from jose import JWTError, jwt
+from jose import JWTError, jwt, ExpiredSignatureError
 
 from db.crud.crud import SessionLocal, CRUD
 
@@ -39,6 +39,12 @@ def get_current_user(token: str = Depends(oauth2_scheme),
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except JWTError:
         raise credentials_exception
     else:
