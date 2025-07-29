@@ -11,6 +11,9 @@ from core.security import oauth2_scheme, SECRET_KEY, ALGORITHM
 
 from api.domain.user.utils import get_user_by_name
 
+from redis import Redis
+from core.redis import redis_client
+
 # DB 세션 주입
 def get_db() -> Session:
     db = SessionLocal()
@@ -50,3 +53,7 @@ def admin_required(current_user: User = Depends(get_current_user)):
             detail="Admin privileges required",
         )
     return current_user
+
+
+def get_redis() -> Redis:
+    return redis_client
