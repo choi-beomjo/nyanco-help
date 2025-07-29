@@ -9,3 +9,4 @@ class Tags(Enum):
     character="Character"
     recommend="Recommend"
     stage="Stage"
+    dev="Dev"
