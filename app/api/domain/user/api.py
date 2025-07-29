@@ -45,7 +45,7 @@ def user_login(form_data: OAuth2PasswordRequestForm = Depends(),
                crud: CRUD = Depends(get_crud)):
     user = get_user_by_name(form_data.username, crud)
     
-    if not pwd_context.verify(form_data.password, user.password):
+    if not user or not pwd_context.verify(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -60,6 +60,5 @@ def user_login(form_data: OAuth2PasswordRequestForm = Depends(),
 
     return {
         "access_token": access_token,
-        "token_type": "bearer",
-        "username": user.name
+        "token_type": "bearer"
     }
