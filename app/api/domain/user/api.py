@@ -118,3 +118,30 @@ def refresh_token_endpoint(request: Request,
     }
 
 
+@router.post('/token/logout')
+def logout_token(request: Request, response: Response,
+                access_token: str = Depends(oauth2_scheme),
+                redis: Redis = Depends(get_redis)):
+    
+    if not access_token:
+        raise HTTPException(401, "No access token")
+
+    # access_token 블랙리스트에 추가 (만료 시간까지 저장)
+    try:
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        exp = payload.get("exp")
+        ttl = exp - int(datetime.utcnow().timestamp())
+        redis.setex(f"blacklist:{access_token}", ttl, "logout")
+    except JWTError:
+        raise HTTPException(401, "Invalid access token")
+
+    # refresh_token 제거
+    refresh_token = request.cookies.get("refresh_token")
+    if refresh_token:
+        redis.delete(f"refresh_token:{refresh_token}")
+
+    # 쿠키 삭제
+    response = JSONResponse(content={"message": "Logged out"})
+    response.delete_cookie(key="refresh_token", path="/api/user/token/refresh")
+
+    return response
