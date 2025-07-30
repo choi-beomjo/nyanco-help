@@ -1,9 +1,13 @@
-import redis
+import redis.asyncio as redis
 import os
 
-redis_client = redis.Redis(
-    host=os.getenv("REDIS_HOST", "localhost"),
-    port=6379,
-    db=0,
+
+redis_pool = redis.ConnectionPool.from_url(
+    f"redis://{os.getenv('REDIS_HOST', 'localhost')}:6379/0",
+    max_connections=10,
     decode_responses=True
+)
+
+redis_client = redis.Redis(
+    connection_pool=redis_pool
 )

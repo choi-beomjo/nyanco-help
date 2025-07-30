@@ -11,7 +11,7 @@ from .utils import *
 from .schemas import *
 from utils.msg.msg import Msg
 from core.security import *
-from redis import Redis
+import redis.asyncio as redis
 import secrets
 
 
@@ -45,11 +45,12 @@ def delete_user(user_id: int, crud: CRUD = Depends(get_crud)):
 
 
 @router.post('/login')
-def user_login(
+async def user_login(
             response: Response,
             form_data: OAuth2PasswordRequestForm = Depends(),
                crud: CRUD = Depends(get_crud),
-               redis: Redis = Depends(get_redis)):
+               redis: redis.Redis = Depends(get_redis)):
+    
     user = get_user_by_name(form_data.username, crud)
     
     if not user or not pwd_context.verify(form_data.password, user.password):
@@ -71,8 +72,8 @@ def user_login(
 
     REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30
 
-    redis.set(f"refresh_token:{user.name}", refresh_token, ex=REFRESH_TOKEN_EXPIRE_MINUTES * 60)
-    redis.set(f"refresh_token:{refresh_token}", user.name, ex=REFRESH_TOKEN_EXPIRE_MINUTES * 60)
+    await redis.set(f"refresh_token:{user.name}", refresh_token, ex=REFRESH_TOKEN_EXPIRE_MINUTES * 60)
+    await redis.set(f"refresh_token:{refresh_token}", user.name, ex=REFRESH_TOKEN_EXPIRE_MINUTES * 60)
 
     response.set_cookie(key="refresh_token", 
                         value=refresh_token, 
@@ -91,17 +92,18 @@ def user_login(
 
 
 @router.post('/token/refresh')
-def refresh_token_endpoint(request: Request,
-                           redis: Redis = Depends(get_redis)):
+async def refresh_token_endpoint(request: Request,
+                           redis: redis.Redis = Depends(get_redis)):
 
     try:
         refresh_token = request.cookies.get("refresh_token")
     except AttributeError:
         raise HTTPException(status_code=401, detail="No refresh token provided")
     
-    username = redis.get(f"refresh_token:{refresh_token}")
+    username = await redis.get(f"refresh_token:{refresh_token}")
 
-    saved_token = redis.get(f"refresh_token:{username}")
+    saved_token = await redis.get(f"refresh_token:{username}")
+    
     if saved_token != refresh_token:
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
@@ -119,9 +121,9 @@ def refresh_token_endpoint(request: Request,
 
 
 @router.post('/token/logout')
-def logout_token(request: Request, response: Response,
+async def logout_token(request: Request, response: Response,
                 access_token: str = Depends(oauth2_scheme),
-                redis: Redis = Depends(get_redis)):
+                redis: redis.Redis = Depends(get_redis)):
     
     if not access_token:
         raise HTTPException(401, "No access token")
@@ -131,14 +133,14 @@ def logout_token(request: Request, response: Response,
         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
         exp = payload.get("exp")
         ttl = exp - int(datetime.utcnow().timestamp())
-        redis.setex(f"blacklist:{access_token}", ttl, "logout")
+        await redis.setex(f"blacklist:{access_token}", ttl, "logout")
     except JWTError:
         raise HTTPException(401, "Invalid access token")
 
     # refresh_token 제거
     refresh_token = request.cookies.get("refresh_token")
     if refresh_token:
-        redis.delete(f"refresh_token:{refresh_token}")
+        await redis.delete(f"refresh_token:{refresh_token}")
 
     # 쿠키 삭제
     response = JSONResponse(content={"message": "Logged out"})

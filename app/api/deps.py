@@ -11,7 +11,7 @@ from core.security import oauth2_scheme, SECRET_KEY, ALGORITHM
 
 from api.domain.user.utils import get_user_by_name
 
-from redis import Redis
+import redis.asyncio as redis
 from core.redis import redis_client
 
 # DB 세션 주입
@@ -61,5 +61,5 @@ def admin_required(current_user: User = Depends(get_current_user)):
     return current_user
 
 
-def get_redis() -> Redis:
+async def get_redis() -> redis.Redis:
     return redis_client
