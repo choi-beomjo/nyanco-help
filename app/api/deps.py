@@ -2,7 +2,7 @@
 
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
-from jose import JWTError, jwt
+from jose import JWTError, jwt, ExpiredSignatureError
 
 from db.crud.crud import SessionLocal, CRUD
 
@@ -10,6 +10,9 @@ from api.domain.user.schemas import Token, User
 from core.security import oauth2_scheme, SECRET_KEY, ALGORITHM
 
 from api.domain.user.utils import get_user_by_name
+
+import redis.asyncio as redis
+from core.redis import redis_client
 
 # DB 세션 주입
 def get_db() -> Session:
@@ -36,6 +39,12 @@ def get_current_user(token: str = Depends(oauth2_scheme),
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except JWTError:
         raise credentials_exception
     else:
@@ -50,3 +59,7 @@ def admin_required(current_user: User = Depends(get_current_user)):
             detail="Admin privileges required",
         )
     return current_user
+
+
+async def get_redis() -> redis.Redis:
+    return redis_client

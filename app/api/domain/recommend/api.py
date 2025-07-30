@@ -7,8 +7,8 @@ from .utils import *
 from .schemas import UserExperienceData
 from .models import UserExperience
 from ..character.schemas import CharacterInfo
-from utils.infer.set_model import *
-from .inference import recommend_characters
+# from utils.infer.set_model import *
+# from .inference import recommend_characters
 
 
 router = APIRouter(tags=[Tags.recommend])
@@ -201,10 +201,10 @@ async def get_user_experience_stats(
     }
     
 
-@router.get("/stage/{stage_id}", dependencies=[Depends(set_request_data)])
-async def recommend_characters_by_stage(stage_id: str, top_k: int):
+# @router.get("/stage/{stage_id}", dependencies=[Depends(set_request_data)])
+# async def recommend_characters_by_stage(stage_id: str, top_k: int):
 
-    top5 = recommend_characters(stage_id=stage_id, top_k=top_k)
-    return top5
+#     top5 = recommend_characters(stage_id=stage_id, top_k=top_k)
+#     return top5
 
 
