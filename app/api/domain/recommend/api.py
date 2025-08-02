@@ -18,13 +18,15 @@ router = APIRouter(tags=[Tags.recommend])
 async def get_characters_by_property(enemy_id: int, crud: CRUD=Depends(get_crud)):
     enemy = get_enemy_from_db(enemy_id=enemy_id, crud=crud)
 
-    characters = get_recommend_characters_by_property(enemy=enemy, crud=crud)
-    characters_by_range = get_recommend_characters_by_range(enemy, crud)
-    characters_by_skill = get_recommend_characters_by_skills(enemy, crud)
+    #characters =  get_filtered_characters_by_property(enemy=enemy, crud=crud)
+    #characters_by_range = get_recommend_characters_by_range(enemy, crud)
+    #characters_by_skill = get_recommend_characters_by_skills(enemy, crud)
+    #characters_by_immunity = get_recommend_characters_by_immunity(enemy, crud)
     return { 
-        "characters_by_properties": [CharacterInfo.from_orm(character) for character in characters],
-        "characters_by_range": [CharacterInfo.from_orm(character) for character in characters_by_range],
-        "characters_by_skills": [CharacterInfo.from_orm(character) for character in characters_by_skill]
+        #"characters_by_properties": [CharacterInfo.from_orm(character) for character in characters],
+        # "characters_by_range": [CharacterInfo.from_orm(character) for character in characters_by_range],
+        #"characters_by_skill": [CharacterInfo.from_orm(character) for character in characters_by_skill],
+        #"characters_by_immunity": [CharacterInfo.from_orm(character) for character in characters_by_immunity]
     }
 
 
