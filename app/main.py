@@ -1,9 +1,6 @@
-import pickle
 
-import joblib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_globals import GlobalsMiddleware, g
 import uvicorn
 from api.api import api
 
@@ -18,7 +15,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(GlobalsMiddleware)
 
 app.include_router(api, prefix="/api")
 
