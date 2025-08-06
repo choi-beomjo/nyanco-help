@@ -158,3 +158,28 @@ def get_immunity_related_skills(skill_name):
         list_by_skill.append({"name": "폭파데미지"})
     return list_by_skill
 
+
+def make_prompt(enemy, recommendations: list[dict]) -> str:
+    prompt = f"아래는 게임에서 적과 그에 대응하는 추천 캐릭터 목록입니다.\n"
+    prompt += f"이 정보를 바탕으로 유저에게 추천 캐릭터들을 **자연스럽고 친절하게** 설명해주세요.\n\n"
+
+    prompt += f"### 🧟 적 정보\n"
+    prompt += f"- 이름: {enemy.name}\n"
+    prompt += f"- 사정거리: {enemy.range} 이상\n"
+    prompt += f"- 속성: {', '.join([p.name for p in enemy.properties]) if enemy.properties else '없음'}\n"
+    prompt += f"- 특수능력: {', '.join([s.name for s in enemy.skills]) if enemy.skills else '없음'}\n"
+    prompt += f"- 내성: {', '.join([i.name for i in enemy.immunities]) if enemy.immunities else '없음'}\n\n"
+
+    prompt += f"### 🧙 추천 캐릭터\n"
+
+    for rec in recommendations:
+        names = rec["character_names"]
+        explanations = rec["explanations"]
+        prompt += f"- `{rec['base_id']}` 기준 캐릭터:\n"
+        for name, reason in zip(names, explanations):
+            prompt += f"    - {name}: {reason}\n"
+        prompt += "\n"
+
+    prompt += "위 내용을 바탕으로 어떤 캐릭터가 어떤 이유로 추천되는지, 초보 유저도 이해할 수 있도록 부드럽고 자연스럽게 설명해줘.\n"
+
+    return prompt

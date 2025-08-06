@@ -7,11 +7,18 @@ from .utils import *
 from .schemas import UserExperienceData
 from .models import UserExperience
 from ..character.schemas import CharacterInfo
+import aiohttp
+from google import genai
+import os
+from google.genai import types
 # from utils.infer.set_model import *
 # from .inference import recommend_characters
 
 
 router = APIRouter(tags=[Tags.recommend])
+
+
+
 
 
 @router.get('/{enemy_id}')
@@ -84,6 +91,13 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD = Depends(get_cru
     # 필요 시 Top-N 제한 가능
     recommendations = sorted(recommendations, key=lambda x: len(x["matched_criteria"][-1]), reverse=True)[:10]
 
+    prompt = make_prompt(enemy, recommendations)
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    response = client.models.generate_content(
+        model="gemini-2.5-flash-lite",
+        contents=prompt
+    )
+
     return {
         "enemy": {
             "id": enemy.id,
@@ -93,7 +107,8 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD = Depends(get_cru
             "skills": [s.name for s in enemy.skills],
             "immunities": [i.name for i in enemy.immunities],
         },
-        "recommendations": recommendations
+        "recommendations": recommendations,
+        "llm_response": response.text
     }
 
 
@@ -279,3 +294,12 @@ async def get_user_experience_stats(
 #     return top5
 
 
+
+@router.get("/gemini/test")
+async def test():
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    response = client.models.generate_content(
+        model="gemini-2.5-flash-lite",
+        contents="Explain how AI works in a few words"
+    )
+    return response.text
