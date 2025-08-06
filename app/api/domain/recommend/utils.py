@@ -4,6 +4,7 @@ from ..property.models import Property
 from ..skill.models import Skill, Immunity
 from ..enemy.models import Enemy
 from sqlalchemy.orm import joinedload
+from collections import defaultdict
 
 
 def get_recommend_characters_by_property(enemy: Enemy, crud):
@@ -158,3 +159,82 @@ def get_immunity_related_skills(skill_name):
         list_by_skill.append({"name": "폭파데미지"})
     return list_by_skill
 
+
+def get_explanation(matched_criteria):
+        parts = []
+        if "property" in matched_criteria:
+            parts.append("속성 상성이 유리함")
+        if "skill" in matched_criteria:
+            parts.append("적의 주요 스킬에 대응 가능")
+        if "immunity" in matched_criteria:
+            parts.append("적의 스킬에 무력화되지 않음")
+        if "range" in matched_criteria:
+            parts.append("사거리가 길어 선공 가능")
+        return " / ".join(parts)
+
+
+def get_recommend_characters_ordered(criteria_sources):
+    character_tag_map = {}
+    for criterion, char_list in criteria_sources.items():
+        for c in char_list:
+            if c.id not in character_tag_map:
+                character_tag_map[c.id] = {
+                    "character": c,
+                    "matched_criteria": set()
+                }
+            character_tag_map[c.id]["matched_criteria"].add(criterion)
+
+    # base_id 기준 그룹핑
+    grouped_by_base = defaultdict(list)
+    for rec in character_tag_map.values():
+        base_id = rec["character"].base_id
+        grouped_by_base[base_id].append(rec)
+    
+
+    # base_id 단위 추천 정리
+    recommendations = []
+    for base_id, group in grouped_by_base.items():
+        sorted_group = sorted(group, key=lambda x: (len(x["matched_criteria"]), x["character"].id), reverse=True)
+        character_ids = [rec["character"].id for rec in sorted_group]
+        character_names = [rec["character"].name for rec in sorted_group]
+        matched_criteria = [list(rec["matched_criteria"]) for rec in sorted_group]
+        explanations = [get_explanation(rec["matched_criteria"]) for rec in sorted_group]
+        representative_id = sorted_group[0]["character"].id
+
+        recommendations.append({
+            "base_id": base_id,
+            "character_ids": character_ids,
+            "character_names": character_names,
+            "matched_criteria": matched_criteria,
+            "explanations": explanations,
+            "representative_id": representative_id
+        })
+
+    # 필요 시 Top-N 제한 가능
+    return sorted(recommendations, key=lambda x: len(x["matched_criteria"][-1]), reverse=True)[:10]
+
+
+def make_prompt(enemy, recommendations: list[dict]) -> str:
+    prompt = f"아래는 게임에서 적과 그에 대응하는 추천 캐릭터 목록입니다.\n"
+    prompt += f"이 정보를 바탕으로 유저에게 추천 캐릭터들을 **자연스럽고 친절하게** 설명해주세요.\n\n"
+
+    prompt += f"### 🧟 적 정보\n"
+    prompt += f"- 이름: {enemy.name}\n"
+    prompt += f"- 사정거리: {enemy.range} 이상\n"
+    prompt += f"- 속성: {', '.join([p.name for p in enemy.properties]) if enemy.properties else '없음'}\n"
+    prompt += f"- 특수능력: {', '.join([s.name for s in enemy.skills]) if enemy.skills else '없음'}\n"
+    prompt += f"- 내성: {', '.join([i.name for i in enemy.immunities]) if enemy.immunities else '없음'}\n\n"
+
+    prompt += f"### 🧙 추천 캐릭터\n"
+
+    for rec in recommendations:
+        names = rec["character_names"]
+        explanations = rec["explanations"]
+        prompt += f"- `{rec['base_id']}` 기준 캐릭터:\n"
+        for name, reason in zip(names, explanations):
+            prompt += f"    - {name}: {reason}\n"
+        prompt += "\n"
+
+    prompt += "위 내용을 바탕으로 어떤 캐릭터가 어떤 이유로 추천되는지, 초보 유저도 이해할 수 있도록 부드럽고 자연스럽게 설명해줘.\n"
+
+    return prompt

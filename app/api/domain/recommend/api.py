@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends
 from ...tags import Tags
 from utils.msg.msg import Msg
-from ...deps import get_current_user, get_crud, CRUD, admin_required
+from ...deps import get_current_user, get_crud, CRUD, admin_required, get_gemini_client, get_redis
 from ..enemy.utils import get_enemy_from_db, get_enemies_from_db
 from .utils import *
 from .schemas import UserExperienceData
 from .models import UserExperience
 from ..character.schemas import CharacterInfo
+import aiohttp
+import redis.asyncio as redis
+from google import genai
+
 # from utils.infer.set_model import *
 # from .inference import recommend_characters
 
@@ -14,9 +18,15 @@ from ..character.schemas import CharacterInfo
 router = APIRouter(tags=[Tags.recommend])
 
 
+
+
+
 @router.get('/{enemy_id}')
-async def get_characters_by_property(enemy_id: int, crud: CRUD = Depends(get_crud)):
-    from collections import defaultdict
+async def get_characters_by_property(enemy_id: int, 
+                                    crud: CRUD = Depends(get_crud),
+                                    client: genai.Client = Depends(get_gemini_client),
+                                    redis: redis.Redis = Depends(get_redis)):
+    
 
     enemy = get_enemy_from_db(enemy_id=enemy_id, crud=crud)
 
@@ -27,7 +37,7 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD = Depends(get_cru
     immunity_chars = get_recommend_characters_by_immunity(enemy, crud)
 
     # 캐릭터별 matched_criteria 수집
-    character_tag_map = {}
+    
     criteria_sources = {
         "property": property_chars,
         "range": range_chars,
@@ -35,54 +45,26 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD = Depends(get_cru
         "immunity": immunity_chars
     }
 
-    for criterion, char_list in criteria_sources.items():
-        for c in char_list:
-            if c.id not in character_tag_map:
-                character_tag_map[c.id] = {
-                    "character": c,
-                    "matched_criteria": set()
-                }
-            character_tag_map[c.id]["matched_criteria"].add(criterion)
+    recommendations = get_recommend_characters_ordered(criteria_sources)
+    # 프롬프트 생성
+    prompt = make_prompt(enemy, recommendations)
+    
+    # 캐시 확인
+    recommend_text = ""
 
-    # base_id 기준 그룹핑
-    grouped_by_base = defaultdict(list)
-    for rec in character_tag_map.values():
-        base_id = rec["character"].base_id
-        grouped_by_base[base_id].append(rec)
+    cached_response = await redis.get(f"recommendation:{enemy_id}")
+    if cached_response:
+        recommend_text = cached_response
 
-    def get_explanation(matched_criteria):
-        parts = []
-        if "property" in matched_criteria:
-            parts.append("속성 상성이 유리함")
-        if "skill" in matched_criteria:
-            parts.append("적의 주요 스킬에 대응 가능")
-        if "immunity" in matched_criteria:
-            parts.append("적의 스킬에 무력화되지 않음")
-        if "range" in matched_criteria:
-            parts.append("사거리가 길어 선공 가능")
-        return " / ".join(parts)
-
-    # base_id 단위 추천 정리
-    recommendations = []
-    for base_id, group in grouped_by_base.items():
-        sorted_group = sorted(group, key=lambda x: (len(x["matched_criteria"]), x["character"].id), reverse=True)
-        character_ids = [rec["character"].id for rec in sorted_group]
-        character_names = [rec["character"].name for rec in sorted_group]
-        matched_criteria = [list(rec["matched_criteria"]) for rec in sorted_group]
-        explanations = [get_explanation(rec["matched_criteria"]) for rec in sorted_group]
-        representative_id = sorted_group[0]["character"].id
-
-        recommendations.append({
-            "base_id": base_id,
-            "character_ids": character_ids,
-            "character_names": character_names,
-            "matched_criteria": matched_criteria,
-            "explanations": explanations,
-            "representative_id": representative_id
-        })
-
-    # 필요 시 Top-N 제한 가능
-    recommendations = sorted(recommendations, key=lambda x: len(x["matched_criteria"][-1]), reverse=True)[:10]
+    else: 
+        # LLM 호출
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-lite",
+            contents=prompt
+        )
+        recommend_text = response.text
+        # 캐시 저장
+        await redis.set(f"recommendation:{enemy_id}", recommend_text, ex=60 * 60 * 24)
 
     return {
         "enemy": {
@@ -93,7 +75,8 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD = Depends(get_cru
             "skills": [s.name for s in enemy.skills],
             "immunities": [i.name for i in enemy.immunities],
         },
-        "recommendations": recommendations
+        "recommendations": recommendations,
+        "llm_response": recommend_text
     }
 
 
@@ -279,3 +262,12 @@ async def get_user_experience_stats(
 #     return top5
 
 
+
+@router.get("/gemini/test")
+async def test():
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    response = client.models.generate_content(
+        model="gemini-2.5-flash-lite",
+        contents="Explain how AI works in a few words"
+    )
+    return response.text

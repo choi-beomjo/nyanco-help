@@ -14,6 +14,9 @@ from api.domain.user.utils import get_user_by_name
 import redis.asyncio as redis
 from core.redis import redis_client
 
+import os
+from google import genai
+
 # DB 세션 주입
 def get_db() -> Session:
     db = SessionLocal()
@@ -63,3 +66,7 @@ def admin_required(current_user: User = Depends(get_current_user)):
 
 async def get_redis() -> redis.Redis:
     return redis_client
+
+
+def get_gemini_client():
+    return genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
