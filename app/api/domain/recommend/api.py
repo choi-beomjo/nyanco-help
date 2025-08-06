@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends
 from ...tags import Tags
 from utils.msg.msg import Msg
-from ...deps import get_current_user, get_crud, CRUD, admin_required, get_gemini_client
+from ...deps import get_current_user, get_crud, CRUD, admin_required, get_gemini_client, get_redis
 from ..enemy.utils import get_enemy_from_db, get_enemies_from_db
 from .utils import *
 from .schemas import UserExperienceData
 from .models import UserExperience
 from ..character.schemas import CharacterInfo
 import aiohttp
+import redis.asyncio as redis
 from google import genai
 # from utils.infer.set_model import *
 # from .inference import recommend_characters
@@ -22,7 +23,8 @@ router = APIRouter(tags=[Tags.recommend])
 @router.get('/{enemy_id}')
 async def get_characters_by_property(enemy_id: int, 
                                     crud: CRUD = Depends(get_crud),
-                                    client: genai.Client = Depends(get_gemini_client)):
+                                    client: genai.Client = Depends(get_gemini_client),
+                                    redis: redis.Redis = Depends(get_redis)):
     from collections import defaultdict
 
     enemy = get_enemy_from_db(enemy_id=enemy_id, crud=crud)
@@ -91,12 +93,25 @@ async def get_characters_by_property(enemy_id: int,
     # 필요 시 Top-N 제한 가능
     recommendations = sorted(recommendations, key=lambda x: len(x["matched_criteria"][-1]), reverse=True)[:10]
 
+    # 프롬프트 생성
     prompt = make_prompt(enemy, recommendations)
     
-    response = client.models.generate_content(
-        model="gemini-2.5-flash-lite",
-        contents=prompt
-    )
+    # 캐시 확인
+    recommend_text = ""
+
+    cached_response = await redis.get(f"recommendation:{enemy_id}")
+    if cached_response:
+        recommend_text = cached_response
+
+    else: 
+        # LLM 호출
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-lite",
+            contents=prompt
+        )
+        recommend_text = response.text
+        # 캐시 저장
+        await redis.set(f"recommendation:{enemy_id}", recommend_text, ex=60 * 60 * 24)
 
     return {
         "enemy": {
@@ -108,7 +123,7 @@ async def get_characters_by_property(enemy_id: int,
             "immunities": [i.name for i in enemy.immunities],
         },
         "recommendations": recommendations,
-        "llm_response": response.text
+        "llm_response": recommend_text
     }
 
 
