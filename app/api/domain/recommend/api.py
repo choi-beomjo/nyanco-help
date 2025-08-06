@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from ...tags import Tags
 from utils.msg.msg import Msg
-from ...deps import get_current_user, get_crud, CRUD, admin_required
+from ...deps import get_current_user, get_crud, CRUD, admin_required, get_gemini_client
 from ..enemy.utils import get_enemy_from_db, get_enemies_from_db
 from .utils import *
 from .schemas import UserExperienceData
@@ -9,8 +9,6 @@ from .models import UserExperience
 from ..character.schemas import CharacterInfo
 import aiohttp
 from google import genai
-import os
-from google.genai import types
 # from utils.infer.set_model import *
 # from .inference import recommend_characters
 
@@ -22,7 +20,9 @@ router = APIRouter(tags=[Tags.recommend])
 
 
 @router.get('/{enemy_id}')
-async def get_characters_by_property(enemy_id: int, crud: CRUD = Depends(get_crud)):
+async def get_characters_by_property(enemy_id: int, 
+                                    crud: CRUD = Depends(get_crud),
+                                    client: genai.Client = Depends(get_gemini_client)):
     from collections import defaultdict
 
     enemy = get_enemy_from_db(enemy_id=enemy_id, crud=crud)
@@ -92,7 +92,7 @@ async def get_characters_by_property(enemy_id: int, crud: CRUD = Depends(get_cru
     recommendations = sorted(recommendations, key=lambda x: len(x["matched_criteria"][-1]), reverse=True)[:10]
 
     prompt = make_prompt(enemy, recommendations)
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    
     response = client.models.generate_content(
         model="gemini-2.5-flash-lite",
         contents=prompt
