@@ -6,3 +6,5 @@ beautifulsoup4
 selenium
 webdriver-manager
 google-genai
+numpy
+faiss-cpu

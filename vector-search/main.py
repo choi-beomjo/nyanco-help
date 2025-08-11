@@ -14,6 +14,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 import os
 from google.genai import types
 from google import genai
+import json
+import numpy as np
+import faiss
 
 # FastAPI 앱 초기화
 app = FastAPI()
@@ -99,8 +102,37 @@ JSON 형식:
             model="gemini-2.5-flash-lite",
             contents=prompt
         )
+        result = response.text.replace("```json", "").replace("```", "")
+        stage_list = json.loads(result)
+        embeddings = []
+        ids = []
+        for stage in stage_list:
+            ids.append(stage['stage_name'])
+            full_text = (
+            f"스테이지: {stage['stage_name']}. 요약: {stage['summary']}. "
+            f"주요 적: {stage['main_enemy']}. 적 특성: {stage['enemy_traits']}. "
+            f"공략: {stage['strategy']}. 추천 유닛: {stage['recommended_units']}"
+            "타입: stage"
+            )
+            embedding = model.encode(full_text)
+            embeddings.append(embedding)
 
-        return {"strategy_text": response.text}
+        embeddings = np.array(embeddings)
+
+        dimension = embeddings.shape[1]
+        index = faiss.IndexFlatL2(dimension) # L2 유클리드 거리를 사용하는 인덱스 생성
+        index.add(embeddings)
+        print(f"Faiss 인덱스에 {index.ntotal}개 벡터가 추가되었습니다.")
+
+        # 6. Faiss 인덱스 파일과 ID 매핑 파일 저장
+        faiss.write_index(index, "/app/data/my_faiss_index.faiss")
+        with open("/app/data/id_mapping.json", "w", encoding="utf-8") as f:
+            json.dump(ids, f, ensure_ascii=False, indent=2)
+    
+        print("Faiss 인덱스와 ID 매핑 파일이 성공적으로 저장되었습니다.")
+
+
+        return {"embeddings": embeddings.tolist()}
 
         
     except Exception as e:
