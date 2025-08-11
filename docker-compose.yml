@@ -30,12 +30,44 @@ services:
   vector-search:
     build: ./vector-search
     container_name: vector-search
+    restart: always
     ports:
       - "8001:8001"
+    volumes:
+      - ./vector-search:/app
+      - faiss-data:/app/data
+    env_file:
+      - .env
     command: ["python3", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
     networks:
       - app_network
+    depends_on:
+      - selenium_hub
+    environment:
+      - SELENIUM_URL=http://selenium_hub:4444/wd/hub
 
+  # Selenium Hub 컨테이너
+  selenium_hub:
+    image: selenium/hub:4.22.0
+    ports:
+      - "4444:4444"
+    networks:
+      - app_network
+  # Chrome 브라우저 컨테이너 (Node)
+  chrome:
+    image: selenium/node-chrome:4.22.0
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - selenium_hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium_hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    networks:
+      - app_network
+volumes:
+  faiss-data:
 
 networks:
   app_network:
