@@ -40,12 +40,9 @@ def embed_texts(texts_to_embed: TextsToEmbed):
     return {"embeddings": embeddings.tolist()}
 
 
-@app.get("/namuwiki")
-def get_namuwiki_selenium():
-    url = "https://namu.wiki/w/악한%20자"
+def get_webdriver():
 
     selenium_url = os.getenv("SELENIUM_URL")
-    
     # WebDriver 옵션 설정
     options = Options()
     options.add_argument('--headless')
@@ -54,23 +51,30 @@ def get_namuwiki_selenium():
     
     # selenium/python 이미지에는 이미 드라이버가 준비되어 있으므로, Service 객체는 필요 없습니다.
     driver = webdriver.Remote(command_executor=selenium_url, options=options)
-    
+
+    return driver
+
+
+def get_web_content(driver, url, class_name):
+
     try:
         driver.get(url)
-        
-        # 'wiki-paragraph'가 로딩될 때까지 기다립니다.
-        # 이 클래스명이 존재하지 않는다면, 이전에 제안해 드렸던 다른 셀렉터 전략을 시도해야 합니다.
+
         wait = WebDriverWait(driver, 10)
         main_content_div = wait.until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, 'x7-L0tzH'))
+            EC.presence_of_all_elements_located((By.CLASS_NAME, class_name))
         )
-        
+
         extracted_text = "\n".join([div.text for div in main_content_div])
+    except Exception as e:
+        return {"error": f"An error occurred: {e}"}
+    
+    return extracted_text
 
 
-        client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+def get_stage_prompt(extracted_text):
 
-        prompt = f"""
+    return  f"""
         아래 텍스트는 냥코대전쟁의 공략집 내용이야. 스테이지별로 분석해서 다음 JSON 형식으로 정리해줘.
 
 
@@ -98,25 +102,37 @@ JSON 형식:
 {extracted_text}
         """
 
+
+def get_genai_response(client: genai.Client, prompt):
+    try:
+
         response = client.models.generate_content(
             model="gemini-2.5-flash-lite",
             contents=prompt
         )
         result = response.text.replace("```json", "").replace("```", "")
-        stage_list = json.loads(result)
+        return json.loads(result)
+    except Exception as e:
+        return {"error": f"An error occurred: {e}"}
+
+
+def write_faiss_index(stage_list):
+    try:
+
         embeddings = []
         ids = []
+
         for stage in stage_list:
             ids.append(stage['stage_name'])
             full_text = (
-            f"스테이지: {stage['stage_name']}. 요약: {stage['summary']}. "
-            f"주요 적: {stage['main_enemy']}. 적 특성: {stage['enemy_traits']}. "
-            f"공략: {stage['strategy']}. 추천 유닛: {stage['recommended_units']}"
-            "타입: stage"
+                f"스테이지: {stage['stage_name']}. 요약: {stage['summary']}. "
+                f"주요 적: {stage['main_enemy']}. 적 특성: {stage['enemy_traits']}. "
+                f"공략: {stage['strategy']}. 추천 유닛: {stage['recommended_units']}"
+                "타입: stage"
             )
             embedding = model.encode(full_text)
             embeddings.append(embedding)
-
+        
         embeddings = np.array(embeddings)
 
         dimension = embeddings.shape[1]
@@ -128,11 +144,33 @@ JSON 형식:
         faiss.write_index(index, "/app/data/my_faiss_index.faiss")
         with open("/app/data/id_mapping.json", "w", encoding="utf-8") as f:
             json.dump(ids, f, ensure_ascii=False, indent=2)
+
+        
+
+    except Exception as e:
+        return {"error": f"An error occurred: {e}"}
+
+
+@app.get("/namuwiki")
+def get_namuwiki_selenium():
+    url = "https://namu.wiki/w/악한%20자"
+
+    driver = get_webdriver()
     
-        print("Faiss 인덱스와 ID 매핑 파일이 성공적으로 저장되었습니다.")
+    try:
+        extracted_text = get_web_content(driver, url, 'x7-L0tzH')
+        
+
+        client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+
+        prompt = get_stage_prompt(extracted_text)
+
+        stage_list = get_genai_response(client, prompt)
+        
+        write_faiss_index(stage_list)
 
 
-        return {"embeddings": embeddings.tolist()}
+        return {"message": "Faiss 인덱스가 성공적으로 저장되었습니다."}
 
         
     except Exception as e:
