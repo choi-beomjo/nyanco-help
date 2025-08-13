@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict, Any
 import requests
 from bs4 import BeautifulSoup, NavigableString, Tag
 from util.crawl import get_webdriver, get_web_content
@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from urllib.parse import urljoin, urlparse, unquote, urlunparse
 import os
 import re
-
+import json
 
 # FastAPI 앱 초기화
 app = FastAPI()
@@ -219,3 +219,157 @@ def get_all_stories_and_index():
         raise HTTPException(status_code=500, detail=f"Error during pipeline execution: {e}")
     finally:
         driver.quit()
+
+
+def extract_stage_content(html: str) -> List[Dict[str, Any]]:
+    """
+    HTML에서 광란 스테이지의 제목과 공략 텍스트를 추출합니다.
+    """
+    soup = BeautifulSoup(html, 'html.parser')
+    stages: List[Dict[str, Any]] = []
+
+    # 1) 스테이지 헤더 수집
+    header_anchors = soup.select('h3 > a[id^="s-2."], h3 > a[id^="s-3."]')
+    header_re = re.compile(r'^s-(2|3)\.\d+$')
+
+    for a in header_anchors:
+        h3 = a.find_parent('h3')
+        if not h3:
+            continue
+
+        # "2.1. 광란의 고양이 강림 [편집]" -> "광란의 고양이 강림"
+        raw_stage_name = h3.get_text(" ", strip=True).replace('[편집]', '')
+        clean_stage_name = re.sub(r'^\d+\.\d+\.\s*', '', raw_stage_name).strip()
+
+        stage_item: Dict[str, Any] = {
+            "stage_name": clean_stage_name,
+            "text": "",
+            "type": "special_stage",
+            "metadata": {}
+        }
+
+        text_parts: List[str] = []
+        captured_info_table = False
+
+        # 2) 현재 h3 이후의 요소들을 문서 순서로 순회
+        for node in h3.next_elements:
+            # 2-1) 다음 스테이지 h3를 만나면 종료
+            if isinstance(node, Tag) and node.name == 'h3':
+                na = node.find('a', id=header_re)
+                if na:
+                    break
+
+            if not isinstance(node, Tag):
+                continue
+
+            # 2-2) 정보 테이블(있을 경우 최초 1회)
+            if not captured_info_table and node.name == 'table':
+                try:
+                    # 표 구조가 문서마다 조금 달라서, 가장 단순한 1행을 우선 파싱
+                    rows = node.select('tbody tr')
+                    if rows:
+                        cells = rows[0].find_all('td')
+                        if len(cells) >= 3:
+                            stage_item['metadata']['info_table'] = {
+                                # 필요 시 필드명은 조정하세요
+                                "col1": cells[0].get_text(" ", strip=True),
+                                "col2": cells[1].get_text(" ", strip=True),
+                                "col3": cells[2].get_text(" ", strip=True),
+                            }
+                            # 가끔 4번째 셀에 보스명이 있기도 함
+                            if len(cells) >= 4:
+                                stage_item['metadata']['info_table']["col4"] = cells[3].get_text(" ", strip=True)
+                            captured_info_table = True
+                except Exception:
+                    pass
+
+            # 2-3) 보스 스탯(블록 인용)
+            if node.name == 'blockquote':
+                btxt = node.get_text("\n", strip=True)
+                if btxt:
+                    lines = [ln for ln in btxt.splitlines() if ln.strip()]
+                    # 첫 줄이 대개 보스명
+                    if lines:
+                        stage_item['metadata'].setdefault('boss_stats', {})
+                        if 'boss_name' not in stage_item['metadata']:
+                            stage_item['metadata']['boss_name'] = re.sub(r'[:：]\s*$', '', lines[0])
+
+                    # 대표 스탯 숫자 파싱
+                    for k, pat in [
+                        ('체력', r'체력[:：]?\s*([0-9,]+)'),
+                        ('공격력', r'공격력[:：]?\s*([0-9,]+)'),
+                        ('사거리', r'사거리[:：]?\s*([0-9,]+)'),
+                        ('히트백', r'히트백[:：]?\s*([0-9,]+)'),
+                    ]:
+                        m = re.search(pat, btxt)
+                        if m:
+                            stage_item['metadata']['boss_stats'][k] = m.group(1)
+
+                    # 특징 한 줄(예: 100% 파동, 떠있는 적 등)도 같이 기록
+                    m2 = re.search(r'(100%[^,\n]+파동|떠있는 적|좀비|흑|메탈|천사)', btxt)
+                    if m2:
+                        stage_item['metadata']['boss_stats']['trait_or_note'] = m2.group(1)
+
+                # 블록 인용 내부 텍스트는 본문에서 제외(중복 방지)
+                continue
+
+            # 2-4) 본문 텍스트 수집: 문단 컨테이너(가장 흔한 x7-L0tzH) 위주
+            if ('x7-L0tzH' in (node.get('class') or [])) and \
+               (node.find_parent('blockquote') is None) and \
+               (node.find_parent('table') is None):
+                t = node.get_text(" ", strip=True)
+                if t and '월간 일정' not in t:
+                    text_parts.append(t)
+
+        # 3) 클린업 & 결과 반영
+        full_text = "\n".join(text_parts).strip()
+        # 방어적 삭제(만약 꼬리표가 섞였을 경우)
+        full_text = re.sub(r'한국판 냥코 대전쟁 월간 일정.*', '', full_text, flags=re.DOTALL)
+
+        stage_item["text"] = full_text
+        stages.append(stage_item)
+
+    return stages
+
+
+
+
+@app.get("/except-legend-story", tags=["Scraping and Indexing"])
+def get_except_legend_story():
+    base_url = "https://namu.wiki"
+
+    stories_to_scrape = [
+        {"name": "사이클론", "url": f"{base_url}/w/냥코%20대전쟁/스페셜%20스테이지/사이클론"},
+        {"name": "광란", "url": f"{base_url}/w/냥코%20대전쟁/스페셜%20스테이지/광란"},
+        {"name": "각성", "url": f"{base_url}/w/냥코%20대전쟁/스페셜%20스테이지/각성"},
+        {"name": "강습", "url": f"{base_url}/w/냥코%20대전쟁/스페셜%20스테이지/강습"},
+        {"name": "풍운냥코탑", "url": f"{base_url}/w/풍운%20냥코탑"},
+        {"name": "이계냥코탑", "url": f"{base_url}/w/이계%20냥코탑"},
+    ]
+
+    all_stages = []
+    driver = get_webdriver()
+
+    for story in stories_to_scrape:
+            # 메인 페이지 HTML
+        driver.get(story["url"])
+        WebDriverWait(driver, 20).until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
+        story_html = driver.page_source
+
+        # story_html을 /app/{story['name']}_raw.html 저장
+        #with open(f"/app/{story['name']}_raw.html", "w", encoding="utf-8") as f:
+        #    f.write(story_html)
+        
+        extracted_data = extract_stage_content(story_html)   
+        # 추출된 데이터를 파일로 저장 (디버깅 목적)
+        with open(f"/app/{story['name']}_extracted.json", "w", encoding="utf-8") as f:
+            json.dump(extracted_data, f, indent=2, ensure_ascii=False)
+
+    return {"message": "Scraping finished."}
+
+
+
+
+
