@@ -200,4 +200,6 @@ app/alembic/versions/*
 
 models/
 
+vector-search/data
+
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode    
